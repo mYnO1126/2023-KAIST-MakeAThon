@@ -18,7 +18,7 @@ Follow the steps below in order to reproduce our results.
 
 ```bash
 git clone https://github.com/mYnO1126/2023-KAIST-MakeAThon.git  # clone
-cd 2023-KAIST-MakeaThon
+cd 2023-KAIST-MakeAThon
 python -m venv "your_venv_name"
 source ./venv/bin/activate
 ```
@@ -33,8 +33,10 @@ pip install torch==1.11.0+cu115 torchvision==0.12.0+cu115 torchaudio==0.11.0+cu1
 3. Install Requirements
 
 ```bash
+sudo apt-get install python3-rpi.gpio
 pip install -r requirements.txt  # install
 ```
+
 ## Run
 ### Training 
 
