@@ -1,10 +1,12 @@
-# 2023 MakeAThon
-Elevator UX Improvement with RL
+# 2023 KAIST MakeAThon
+2023 KAIST MakeAThon
+경민호
+
 
 ## Installation Guide
 ### Using Python Venv
 
-Clone repo and install [requirements.txt](https://github.com/jentleshin/RL-on-Elevator-UX/blob/main/requirements.txt) in a
+Clone repo and install [requirements.txt](https://github.com/mYnO1126/2023-KAIST-MakeAThon.git) in a
 [**Python>=3.7.0**](https://www.python.org/) environment, including
 [**PyTorch>=1.7**](https://pytorch.org/get-started/locally/).
 
@@ -15,8 +17,8 @@ Follow the steps below in order to reproduce our results.
 1. Clone repo
 
 ```bash
-git clone https://github.com/jentleshin/RL-on-Elevator-UX.git  # clone
-cd RL-on-Elevator-UX
+git clone https://github.com/mYnO1126/2023-KAIST-MakeAThon.git  # clone
+cd 2023-KAIST-MakeaThon
 python -m venv "your_venv_name"
 source ./venv/bin/activate
 ```
