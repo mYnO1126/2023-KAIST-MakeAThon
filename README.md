@@ -2,6 +2,18 @@
 2023 KAIST MakeAThon
 경민호
 
+## TODO
+
+-3차원 step motor 제어
+-pygame 등으로 디스플레이 제작, 터치스크린 활용
+-센서들 값 읽기 - analog 문제점 확인
+-카메라 모듈 장착, 확인
+
+추가사항
+-앱?
+
+
+
 
 ## Installation Guide
 ### Using Python Venv
