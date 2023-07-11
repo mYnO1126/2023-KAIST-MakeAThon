@@ -1,9 +1,9 @@
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import time
 import signal                   
 import sys
 import pygame
-import SmartFarmControl
+#import SmartFarmControl
 
 def signal_handler(sig, frame):
     GPIO.cleanup()
