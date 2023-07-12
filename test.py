@@ -17,10 +17,11 @@ def switchXPressed(self,channel):
     print(left)
     print(right)
 
-GPIO.setup(END_SWITCH_X1, IN, pull_up_down = GPIO.PUD_DOWN)
-GPIO.setup(END_SWITCH_X2, IN, pull_up_down = GPIO.PUD_DOWN)
-GPIO.add_event_detect(END_SWITCH_X1, GPIO.RISING, callback=switchXPressed)
-GPIO.add_event_detect(END_SWITCH_X2, GPIO.RISING, callback=switchXPressed)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(END_SWITCH_X1, IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(END_SWITCH_X2, IN, pull_up_down = GPIO.PUD_UP)
+GPIO.add_event_detect(END_SWITCH_X1, GPIO.FALLING, callback=switchXPressed)
+GPIO.add_event_detect(END_SWITCH_X2, GPIO.FALLING, callback=switchXPressed)
 
 try:
     while 1:
