@@ -115,9 +115,9 @@ class SmartFarmControl():
         if motor==Motor.X:
             GPIO.output(MOTOR_X_CW_PIN,dir)
         elif motor==Motor.Y:
-            GPIO.output(MOTOR_Y_CW_PIN,dir)
+            GPIO.output(MOTOR_Y_CW_PIN,not dir)
         elif motor==Motor.Z:
-            GPIO.output(MOTOR_Z_CW_PIN,dir)
+            GPIO.output(MOTOR_Z_CW_PIN,not dir)
 
     def setMotorsRotationDir(self,motors,dir):
         for motor in motors:
