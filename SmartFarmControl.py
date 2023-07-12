@@ -31,7 +31,7 @@ Z_OFFSET=1.0
 OUT=GPIO.OUT
 IN=GPIO.IN
 
-ROTATION_T=0.003
+ROTATION_T=0.001
 STOP_T=0.001
 
 class Motor(Enum):
@@ -200,10 +200,10 @@ class SmartFarmControl():
         self.moveMotorsToCoords(dest)
 
     def test(self):
-        self.setMotorsRotationDir([Motor.Y],True)
+        self.setMotorsRotationDir([Motor.X],False)
         self.counter=0
         while True:
-            self.moveMotors([Motor.Y])
+            self.moveMotors([Motor.X])
             self.counter+=1
             print(self.counter)
             if self.counter==1000:
@@ -230,6 +230,7 @@ class SmartFarmControl():
             if left==True:
                 self.xpos=0
                 self.xlen=self.counter-self.xlen
+                print("xlen: "+str(self.xlen))
                 self.modes[0]="normal"
                 self.setMotorRotationDir(Motor.X,Dir.CW)
             elif right==True:
@@ -250,6 +251,7 @@ class SmartFarmControl():
             if left==True:
                 self.ypos=0
                 self.ylen=self.counter-self.ylen
+                print("ylen: "+str(self.ylen))
                 self.modes[1]="normal"
                 self.setMotorRotationDir(Motor.Y,Dir.CW)
             elif right==True:
@@ -270,6 +272,7 @@ class SmartFarmControl():
             if left==True:
                 self.zpos=0
                 self.zlen=self.counter-self.zlen
+                print("zlen: "+str(self.zlen))
                 self.modes[2]="normal"
                 self.setMotorRotationDir(Motor.Z,Dir.CW)
             elif right==True:
