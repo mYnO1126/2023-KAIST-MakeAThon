@@ -12,6 +12,7 @@ HUMID_LIMIT=20.0
 SOIL_LIMIT=20.0
 INFO_ICON_SIZE=(150,90)
 NOTIFICATION_SIZE=(370,370)
+POT_GRID=(3,4)
 
 #import SmartFarmControl
 class Color():
@@ -24,24 +25,35 @@ class Color():
     skyblue=(0,240,255)
     green=(173,255,0)
 
+class Info():
+    def __init__(self,potBool,infos):
+        self.potBool=potBool
+        self.infos=infos
+    def updateInfo(self,potBool,infos):
+        self.potBool=potBool
+        self.infos=infos
+    def returnInfo(self):
+        return self.potBool,self.infos
+
+class potInfo():
+    def __init__(self,grid=POT_GRID):
+        self.grid=grid
+        self.Infos=[Info(True,None) for i in range(grid[0]*grid[1])]
+        for i in range(grid[1]):
+            self.Infos[i].updateInfo(False,None)
+    def returnPotInfo(self,pos):
+        return self.Infos[pos[0]*self.grid[1]+pos[1]].returnInfo()
+    
+
 
 class Button:
     def __init__(self,img_in,pos, img_act, action = None):
-        # mouse = pygame.mouse.get_pos()
-        # click = pygame.mouse.get_pressed()
         self.width=img_in.get_width()
         self.height=img_in.get_height()
         self.img_in=img_in
         self.img_act=img_act
         self.pos=pos
         self.action=action
-        # if x + width > mouse[0] > x and y + height > mouse[1] > y:
-        #     display.blit(img_act,(x_act, y_act))
-        #     if click[0] and action != None:
-        #         time.sleep(1)
-        #         action()
-        # else:
-        #     display.blit(img_in,(x,y))
     def printScreen(self,display):
         display.blit(self.img_in,(self.pos[0]-self.width/2,self.pos[1]-self.height/2))
     def updateMouseOn(self,display,mouse):
@@ -105,11 +117,6 @@ class infoIcon:
             text_rect.center=(self.pos[0]+25,self.pos[1])
         display.blit(text,text_rect)
     
-
-
-    
-
-
 class Notification:
     def __init__(self,infos,pos,size,thickness,radius, action = None):
         self.info=infos
@@ -135,27 +142,87 @@ class Notification:
             if self.action is not None:
                     time.sleep(0.2)
                     self.action()
-    def interaction(self,display,mouse):
-        return
+    # def interaction(self,display,mouse):
+    #     return
 
 
 class potGrid:
-    def __init__(self,infos,pos,size, action = None):
-        self.info=infos
+    def __init__(self,pos,size,thickness,radius,potInfo, action = None):
         self.pos=pos
         self.action=action
         self.size=size
+        self.thickness=thickness
+        self.radius=radius
+        self.potInfo=potInfo
+
+        self.potSize=65
+        self.gap=20
+        self.offset=(25,70)
+        self.img=self.drawPotGrid()
 
     def printScreen(self,display):
-        return
+        display.blit(self.img,(self.pos[0]-self.size[0]/2,self.pos[1]-self.size[1]/2))
 
     def updateClick(self,display,mouse):
+        grid=self.checkMouseGrid(mouse)
         if self.action=="disabled":
-            return
+            if grid is None:
+                potBool,info=self.potInfo.returnPotInfo(grid)
+                if potBool:
+                    return info
+                else:
+                    return "no pot"
+            else:
+                print("a")
         else:
             return "notification"
 
-
+    def updatePotInfo(self,potInfo):
+        self.potInfo=potInfo
+    def drawPotGrid(self):
+        color=Color()
+        potGridIcon = pygame.Surface(NOTIFICATION_SIZE)
+        potGridIcon.fill(color.white)
+        pygame.draw.rect(
+            potGridIcon,
+            color.skyblue,
+            pygame.Rect(
+                (0,0),
+                NOTIFICATION_SIZE,
+            ),
+            self.thickness,
+            self.radius,
+        )
+        x,y=POT_GRID
+        for i in range(x):
+            for j in range(y):
+                potBool,_=self.potInfo.returnPotInfo((i,j))
+                if potBool:
+                    col=color.green
+                else:
+                    col=color.gray
+                pygame.draw.rect(
+                    potGridIcon,
+                    col,
+                    pygame.Rect(
+                        (self.offset[0]+j*(self.potSize+self.gap),self.offset[1]+i*(self.potSize+self.gap)),
+                        (self.potSize,self.potSize),
+                    ),
+                )
+        return potGridIcon
+    def checkMouseGrid(self,mouse):
+        grid=[-1,-1]
+        mousePos=(mouse[0]-(self.pos[0]-self.size[0]/2),mouse[1]-(self.pos[1]-self.size[1]/2))
+        for i in range(POT_GRID[0]):
+            if self.offset[1]+(self.potSize+self.gap)*i<mousePos[1]<self.offset[1]+(self.potSize+self.gap)*(i+1)-self.gap:
+                grid[0]=i
+        for i in range(POT_GRID[1]):
+            if self.offset[0]+(self.potSize+self.gap)*i<mousePos[0]<self.offset[0]+(self.potSize+self.gap)*(i+1)-self.gap:
+                grid[1]=i
+        if grid[0]==-1 or grid[1]==-1:
+            return None
+        else:
+            return grid
 
 class Process:
     def __init__(self):
@@ -185,8 +252,14 @@ class Process:
         # farmControl.initializing_end_to_end()
 
         self.info=[25.0,50.0,True,50.0]
-        self.potInfo=np.ones((3,4))
-        self.potInfo[2]=[0,0,0,0]
+        self.potInfo=potInfo(POT_GRID)
+
+    def updateSensorsInfos(self):
+        self.arduino.flushInput()
+        line = self.arduino.readline()
+        line = line.decode('euc-kr') # cp949 euc-kr utf-8
+        line = line.split()
+        self.info=line
 
     def mainScreen(self):
         tempIcon=pygame.transform.scale(pygame.image.load("images/temp.jpg"),(50,50))
@@ -223,11 +296,7 @@ class Process:
         # printObjects(buttons,self.screen)
 
         while True:
-            # self.arduino.flushInput()
-            # line = self.arduino.readline()
-            # line = line.decode('euc-kr') # cp949 euc-kr utf-8
-            # line = line.split()
-            # self.info=line
+            # self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             printObjects([notification],self.screen)
@@ -247,18 +316,14 @@ class Process:
         clickBack=pygame.transform.scale(pygame.image.load("images/back_icon.png"),(40,40))
 
         backButton = Button(backIcon,(920,40),clickBack,self.mainScreen)
-        notification=Notification(None,(200,200),NOTIFICATION_SIZE,15,20,None)
-        #potgrid=potGrid()
+        notification=Notification(None,(280,260),NOTIFICATION_SIZE,15,20,None)
+        potgrid=potGrid((1024-280,260),NOTIFICATION_SIZE,15,20,self.potInfo,"disabled")
         
         buttons=[self.stopButton,self.settingsButton,backButton]
-        objects=[notification]
+        objects=[notification,potgrid]
 
         while True:
-            # self.arduino.flushInput()
-            # line = self.arduino.readline()
-            # line = line.decode('euc-kr') # cp949 euc-kr utf-8
-            # line = line.split()
-            # self.info=line
+            # self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             printObjects(objects,self.screen)
@@ -269,7 +334,8 @@ class Process:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button==1:
                     for button in buttons:
                         button.updateClick(self.screen,mouse)
-                    notification.interaction(self.screen,mouse)
+                    # notification.interaction(self.screen,mouse)
+                    potgrid.updateClick(self.screen,mouse)
             pygame.display.flip()
             self.fpsClock.tick(self.fps)
 
@@ -285,11 +351,7 @@ class Process:
         objects=[notification]
 
         while True:
-            # self.arduino.flushInput()
-            # line = self.arduino.readline()
-            # line = line.decode('euc-kr') # cp949 euc-kr utf-8
-            # line = line.split()
-            # self.info=line
+            # self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             printObjects(objects,self.screen)
