@@ -25,7 +25,9 @@ GPIO.add_event_detect(END_SWITCH_X2, GPIO.FALLING, callback=switchXPressed)
 
 try:
     while 1:
-        print(".")
+        # print(".")
+        pin_read = GPIO.input(END_SWITCH_X2)
+        print(pin_read)
         time.sleep(0.1)
 finally:
     GPIO.cleanup()
