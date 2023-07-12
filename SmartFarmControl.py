@@ -90,20 +90,20 @@ class SmartFarmControl():
         # GPIO.setmode(GPIO.BCM)
         GPIO.setup(MOTOR_Z_CLK_PIN,OUT)
 
-        GPIO.setup(END_SWITCH_X1, IN, pull_up_down = GPIO.PUD_DOWN)
-        GPIO.setup(END_SWITCH_X2, IN, pull_up_down = GPIO.PUD_DOWN)
-        GPIO.add_event_detect(END_SWITCH_X1, GPIO.RISING, callback=self.switchXPressed)
-        GPIO.add_event_detect(END_SWITCH_X2, GPIO.RISING, callback=self.switchXPressed)
+        GPIO.setup(END_SWITCH_X1, IN, pull_up_down = GPIO.PUD_UP)
+        GPIO.setup(END_SWITCH_X2, IN, pull_up_down = GPIO.PUD_UP)
+        GPIO.add_event_detect(END_SWITCH_X1, GPIO.FALLING, callback=self.switchXPressed,bouncetime=300)
+        GPIO.add_event_detect(END_SWITCH_X2, GPIO.FALLING, callback=self.switchXPressed,bouncetime=300)
 
-        GPIO.setup(END_SWITCH_Y1, IN, pull_up_down = GPIO.PUD_DOWN)
-        GPIO.setup(END_SWITCH_Y2, IN, pull_up_down = GPIO.PUD_DOWN)
-        GPIO.add_event_detect(END_SWITCH_Y1, GPIO.RISING, callback=self.switchYPressed)
-        GPIO.add_event_detect(END_SWITCH_Y2, GPIO.RISING, callback=self.switchYPressed)
+        GPIO.setup(END_SWITCH_Y1, IN, pull_up_down = GPIO.PUD_UP)
+        GPIO.setup(END_SWITCH_Y2, IN, pull_up_down = GPIO.PUD_UP)
+        GPIO.add_event_detect(END_SWITCH_Y1, GPIO.FALLING, callback=self.switchYPressed,bouncetime=300)
+        GPIO.add_event_detect(END_SWITCH_Y2, GPIO.FALLING, callback=self.switchYPressed,bouncetime=300)
 
-        GPIO.setup(END_SWITCH_Z1, IN, pull_up_down = GPIO.PUD_DOWN)
-        GPIO.setup(END_SWITCH_Z2, IN, pull_up_down = GPIO.PUD_DOWN)
-        GPIO.add_event_detect(END_SWITCH_Z1, GPIO.RISING, callback=self.switchZPressed)
-        GPIO.add_event_detect(END_SWITCH_Z2, GPIO.RISING, callback=self.switchZPressed)
+        GPIO.setup(END_SWITCH_Z1, IN, pull_up_down = GPIO.PUD_UP)
+        GPIO.setup(END_SWITCH_Z2, IN, pull_up_down = GPIO.PUD_UP)
+        GPIO.add_event_detect(END_SWITCH_Z1, GPIO.FALLING, callback=self.switchZPressed,bouncetime=300)
+        GPIO.add_event_detect(END_SWITCH_Z2, GPIO.FALLING, callback=self.switchZPressed,bouncetime=300)
 
     def checkMode(self)->bool:
         for mode in self.modes:
@@ -220,6 +220,13 @@ class SmartFarmControl():
             self.moveMotors([Motor.X,Motor.Y,Motor.Z])
             self.counter+=1
             if self.checkMode() is True:
+                break
+        self.counter=0
+        while True:
+            self.moveMotors([Motor.X,Motor.Y,Motor.Z])
+            self.counter+=1
+            print(self.counter)
+            if self.counter==1000:
                 break
 
         
