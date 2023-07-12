@@ -92,18 +92,18 @@ class SmartFarmControl():
 
         GPIO.setup(END_SWITCH_X1, IN, pull_up_down = GPIO.PUD_UP)
         GPIO.setup(END_SWITCH_X2, IN, pull_up_down = GPIO.PUD_UP)
-        GPIO.add_event_detect(END_SWITCH_X1, GPIO.FALLING, callback=self.switchXPressed,bouncetime=300)
-        GPIO.add_event_detect(END_SWITCH_X2, GPIO.FALLING, callback=self.switchXPressed,bouncetime=300)
+        GPIO.add_event_detect(END_SWITCH_X1, GPIO.FALLING, callback=self.switchX1Pressed,bouncetime=300)
+        GPIO.add_event_detect(END_SWITCH_X2, GPIO.FALLING, callback=self.switchX2Pressed,bouncetime=300)
 
         GPIO.setup(END_SWITCH_Y1, IN, pull_up_down = GPIO.PUD_UP)
         GPIO.setup(END_SWITCH_Y2, IN, pull_up_down = GPIO.PUD_UP)
-        GPIO.add_event_detect(END_SWITCH_Y1, GPIO.FALLING, callback=self.switchYPressed,bouncetime=300)
-        GPIO.add_event_detect(END_SWITCH_Y2, GPIO.FALLING, callback=self.switchYPressed,bouncetime=300)
+        GPIO.add_event_detect(END_SWITCH_Y1, GPIO.FALLING, callback=self.switchY1Pressed,bouncetime=300)
+        GPIO.add_event_detect(END_SWITCH_Y2, GPIO.FALLING, callback=self.switchY2Pressed,bouncetime=300)
 
         GPIO.setup(END_SWITCH_Z1, IN, pull_up_down = GPIO.PUD_UP)
         GPIO.setup(END_SWITCH_Z2, IN, pull_up_down = GPIO.PUD_UP)
-        GPIO.add_event_detect(END_SWITCH_Z1, GPIO.FALLING, callback=self.switchZPressed,bouncetime=300)
-        GPIO.add_event_detect(END_SWITCH_Z2, GPIO.FALLING, callback=self.switchZPressed,bouncetime=300)
+        GPIO.add_event_detect(END_SWITCH_Z1, GPIO.FALLING, callback=self.switchZ1Pressed,bouncetime=300)
+        GPIO.add_event_detect(END_SWITCH_Z2, GPIO.FALLING, callback=self.switchZ2Pressed,bouncetime=300)
 
     def checkMode(self)->bool:
         for mode in self.modes:
@@ -230,76 +230,63 @@ class SmartFarmControl():
                 break
 
         
-    def switchXPressed(self,channel):
-        left = GPIO.input(END_SWITCH_X1)
-        right= GPIO.input(END_SWITCH_X2)
-        print(left)
-        print(right)
+    def switchX1Pressed(self,channel):
         if self.modes[0]=="initialization":
-            if left==False:
-                print("x1")
-                self.xpos=0
-                self.xlen=self.counter-self.xlen
-                print("xlen: "+str(self.xlen))
-                self.modes[0]="normal"
-                self.setMotorRotationDir(Motor.X,True)
-            elif right==False:
-                print("x2")
-                self.xlen=self.counter
-                self.setMotorRotationDir(Motor.X,False)
+            print("x1")
+            self.xpos=0
+            self.xlen=self.counter-self.xlen
+            print("xlen: "+str(self.xlen))
+            self.modes[0]="normal"
+            self.setMotorRotationDir(Motor.X,True)
         else:
-            if left==False:
-                self.xpos=0
-                self.setMotorRotationDir(Motor.X,True)
-            elif right==False:
-                self.xpos=self.xlen
-                self.setMotorRotationDir(Motor.X,False)
-
-    def switchYPressed(self,channel):
-        left = GPIO.input(END_SWITCH_X1)
-        right= GPIO.input(END_SWITCH_X2)
+            self.xpos=0
+            self.setMotorRotationDir(Motor.X,True)
+    def switchX2Pressed(self,channel):
+        if self.modes[0]=="initialization":
+            print("x2")
+            self.xlen=self.counter
+            self.setMotorRotationDir(Motor.X,False)
+        else:
+            self.xpos=self.xlen
+            self.setMotorRotationDir(Motor.X,False)
+    def switchY1Pressed(self,channel):
         if self.modes[1]=="initialization":
-            if left==False:
-                print("y1")
-                self.ypos=0
-                self.ylen=self.counter-self.ylen
-                print("ylen: "+str(self.ylen))
-                self.modes[1]="normal"
-                self.setMotorRotationDir(Motor.Y,True)
-            elif right==False:
-                print("y2")
-                self.ylen=self.counter
-                self.setMotorRotationDir(Motor.Y,False)
+            print("y1")
+            self.ypos=0
+            self.ylen=self.counter-self.ylen
+            print("ylen: "+str(self.ylen))
+            self.modes[1]="normal"
+            self.setMotorRotationDir(Motor.Y,True)
         else:
-            if left==False:
-                self.ypos=0
-                self.setMotorRotationDir(Motor.Y,True)
-            elif right==False:
-                self.ypos=self.ylen
-                self.setMotorRotationDir(Motor.Y,False)
-        
-    def switchZPressed(self,channel):
-        left = GPIO.input(END_SWITCH_X1)
-        right= GPIO.input(END_SWITCH_X2)
+            self.ypos=0
+            self.setMotorRotationDir(Motor.Y,True)
+    def switchY2Pressed(self,channel):
+        if self.modes[1]=="initialization":
+            print("y2")
+            self.ylen=self.counter
+            self.setMotorRotationDir(Motor.Y,False)
+        else:
+            self.ypos=self.ylen
+            self.setMotorRotationDir(Motor.Y,False)
+    def switchZ1Pressed(self,channel):
         if self.modes[2]=="initialization":
-            if left==False:
-                print("z1")
-                self.zpos=0
-                self.zlen=self.counter-self.zlen
-                print("zlen: "+str(self.zlen))
-                self.modes[2]="normal"
-                self.setMotorRotationDir(Motor.Z,True)
-            elif right==False:
-                print("z2")
-                self.zlen=self.counter
-                self.setMotorRotationDir(Motor.Z,False)
+            print("z1")
+            self.zpos=0
+            self.zlen=self.counter-self.zlen
+            print("zlen: "+str(self.zlen))
+            self.modes[2]="normal"
+            self.setMotorRotationDir(Motor.Z,True)
         else:
-            if left==False:
-                self.zpos=0
-                self.setMotorRotationDir(Motor.Z,True)
-            elif right==False:
-                self.zpos=self.zlen
-                self.setMotorRotationDir(Motor.Z,False)
+            self.zpos=0
+            self.setMotorRotationDir(Motor.Z,True)
+    def switchZ2Pressed(self,channel):
+        if self.modes[2]=="initialization":
+            print("z2")
+            self.zlen=self.counter
+            self.setMotorRotationDir(Motor.Z,False)
+        else:
+            self.zpos=self.zlen
+            self.setMotorRotationDir(Motor.Z,False)
 
     
 
