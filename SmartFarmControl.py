@@ -214,13 +214,12 @@ class SmartFarmControl():
 
 
     def initializing_end_to_end(self):
-        self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],Dir.CW)
+        self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],True)
         self.counter=0
         while True:
             self.moveMotors([Motor.X,Motor.Y,Motor.Z])
             self.counter+=1
-            print(self.counter)
-            if self.counter==100:
+            if self.checkMode() is True:
                 break
 
         
