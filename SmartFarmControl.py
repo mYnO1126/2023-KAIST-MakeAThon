@@ -232,17 +232,17 @@ class SmartFarmControl():
                 self.xlen=self.counter-self.xlen
                 print("xlen: "+str(self.xlen))
                 self.modes[0]="normal"
-                self.setMotorRotationDir(Motor.X,Dir.CW)
+                self.setMotorRotationDir(Motor.X,True)
             elif right==True:
                 self.xlen=self.counter
-                self.setMotorRotationDir(Motor.X,Dir.CCW)
+                self.setMotorRotationDir(Motor.X,False)
         else:
             if left==True:
                 self.xpos=0
-                self.setMotorRotationDir(Motor.X,Dir.CW)
+                self.setMotorRotationDir(Motor.X,True)
             elif right==True:
                 self.xpos=self.xlen
-                self.setMotorRotationDir(Motor.X,Dir.CCW)
+                self.setMotorRotationDir(Motor.X,False)
 
     def switchYPressed(self,channel):
         left = GPIO.input(END_SWITCH_X1)
@@ -253,17 +253,17 @@ class SmartFarmControl():
                 self.ylen=self.counter-self.ylen
                 print("ylen: "+str(self.ylen))
                 self.modes[1]="normal"
-                self.setMotorRotationDir(Motor.Y,Dir.CW)
+                self.setMotorRotationDir(Motor.Y,True)
             elif right==True:
                 self.ylen=self.counter
-                self.setMotorRotationDir(Motor.Y,Dir.CCW)
+                self.setMotorRotationDir(Motor.Y,False)
         else:
             if left==True:
                 self.ypos=0
-                self.setMotorRotationDir(Motor.Y,Dir.CW)
+                self.setMotorRotationDir(Motor.Y,True)
             elif right==True:
                 self.ypos=self.ylen
-                self.setMotorRotationDir(Motor.Y,Dir.CCW)
+                self.setMotorRotationDir(Motor.Y,False)
         
     def switchZPressed(self,channel):
         left = GPIO.input(END_SWITCH_X1)
@@ -274,17 +274,17 @@ class SmartFarmControl():
                 self.zlen=self.counter-self.zlen
                 print("zlen: "+str(self.zlen))
                 self.modes[2]="normal"
-                self.setMotorRotationDir(Motor.Z,Dir.CW)
+                self.setMotorRotationDir(Motor.Z,True)
             elif right==True:
                 self.zlen=self.counter
-                self.setMotorRotationDir(Motor.Z,Dir.CCW)
+                self.setMotorRotationDir(Motor.Z,False)
         else:
             if left==True:
                 self.zpos=0
-                self.setMotorRotationDir(Motor.Z,Dir.CW)
+                self.setMotorRotationDir(Motor.Z,True)
             elif right==True:
                 self.zpos=self.zlen
-                self.setMotorRotationDir(Motor.Z,Dir.CCW)
+                self.setMotorRotationDir(Motor.Z,False)
 
     
 
