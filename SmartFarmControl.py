@@ -22,6 +22,12 @@ X_LEN=1.0
 Y_LEN=2.0
 Z_LEN=3.0
 
+X_UNIT=1.0
+Z_UNIT=1.0
+
+X_OFFSET=1.0
+Z_OFFSET=1.0
+
 OUT=GPIO.OUT
 IN=GPIO.IN
 
@@ -156,6 +162,7 @@ class SmartFarmControl():
         return updatedDistance
 
     def moveMotorsDistance(self,distances):
+        distances=int(distances)
         if distances[0]>=0:
             if distances[0]+self.xpos>=self.xlen:
                 distances[0]=self.xlen-self.xpos-1
@@ -178,6 +185,17 @@ class SmartFarmControl():
         for i in range(maxdist):
             self.moveMotors(self.movableMotors(distances))
             distances=self.updateDistance(distances)
+
+    def moveMotorsToCoords(self,coords):
+        x=coords[0]
+        z=coords[1]
+
+        distances=((x*X_UNIT+X_OFFSET)/X_LEN*self.xlen-self.xpos,0,(z*Z_UNIT+Z_OFFSET)/Z_LEN*self.zlen-self.zpos)
+
+        self.moveMotorsDistance(distances)
+
+
+
 
     def initializing_end_to_end(self):
         self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],Dir.CW)

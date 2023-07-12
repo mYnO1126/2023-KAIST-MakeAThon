@@ -3,6 +3,9 @@ import time
 import signal                   
 import sys
 import pygame
+import serial
+#import SmartFarmControl
+import numpy as np
 
 TEMP_LIMIT=3.0
 HUMID_LIMIT=20.0
@@ -160,6 +163,8 @@ class Process:
         pygame.font.init()
         self.font=pygame.font.Font('freesansbold.ttf',20)
 
+        # self.arduino = serial.Serial('COM11', 115200)
+
         self.color=Color()
         resolution = (1024,600)
         self.fps=30
@@ -176,12 +181,14 @@ class Process:
         clickSettings=pygame.transform.scale(pygame.image.load("images/settings.png"),(40,40))
         self.settingsButton=Button(settingsIcon,(40,560),clickSettings,self.settingsScreen)
 
+        # farmControl=SmartFarmControl.SmartFarmControl()
+        # farmControl.initializing_end_to_end()
 
+        self.info=[25.0,50.0,True,50.0]
+        self.potInfo=np.ones((3,4))
+        self.potInfo[2]=[0,0,0,0]
 
     def mainScreen(self):
-        
-        self.info=[25.0,50.0,True,50.0]
-
         tempIcon=pygame.transform.scale(pygame.image.load("images/temp.jpg"),(50,50))
         humidityIcon=pygame.transform.scale(pygame.image.load("images/humidity.png"),(50,50))
         ventilationIcon=pygame.transform.scale(pygame.image.load("images/ventilation.jpg"),(50,50))
@@ -203,11 +210,11 @@ class Process:
                 NOTIFICATION_SIZE,
             ),
             15,
-            5,
+            20,
         )
         potSelectionIcon.blit(plantIcon,(NOTIFICATION_SIZE[0]/2.0-85,NOTIFICATION_SIZE[1]/2.0-85))
         potSelectionButton=Button(potSelectionIcon,(1024-280,260),potSelectionIcon,self.potSelectionScreen)
-        notification=Notification(None,(280,260),NOTIFICATION_SIZE,15,5,self.notificationScreen)
+        notification=Notification(None,(280,260),NOTIFICATION_SIZE,15,20,self.notificationScreen)
 
         buttons=[self.stopButton,self.settingsButton,potSelectionButton]
         self.infos=[temp,humidity,ventilation,soilHumidity]
@@ -216,6 +223,11 @@ class Process:
         # printObjects(buttons,self.screen)
 
         while True:
+            # self.arduino.flushInput()
+            # line = self.arduino.readline()
+            # line = line.decode('euc-kr') # cp949 euc-kr utf-8
+            # line = line.split()
+            # self.info=line
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             printObjects([notification],self.screen)
@@ -235,13 +247,18 @@ class Process:
         clickBack=pygame.transform.scale(pygame.image.load("images/back_icon.png"),(40,40))
 
         backButton = Button(backIcon,(920,40),clickBack,self.mainScreen)
-        notification=Notification(None,(200,200),NOTIFICATION_SIZE,20,3,None)
+        notification=Notification(None,(200,200),NOTIFICATION_SIZE,15,20,None)
         #potgrid=potGrid()
         
         buttons=[self.stopButton,self.settingsButton,backButton]
         objects=[notification]
 
         while True:
+            # self.arduino.flushInput()
+            # line = self.arduino.readline()
+            # line = line.decode('euc-kr') # cp949 euc-kr utf-8
+            # line = line.split()
+            # self.info=line
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             printObjects(objects,self.screen)
@@ -261,13 +278,18 @@ class Process:
         clickBack=pygame.transform.scale(pygame.image.load("images/back_icon.png"),(40,40))
 
         backButton = Button(backIcon,(920,40),clickBack,self.mainScreen)
-        notification=Notification(None,(1024-280,260),NOTIFICATION_SIZE,20,3,None)
+        notification=Notification(None,(1024-280,260),NOTIFICATION_SIZE,15,20,None)
         #potgrid=potGrid()
         
         buttons=[self.stopButton,self.settingsButton,backButton]
         objects=[notification]
 
         while True:
+            # self.arduino.flushInput()
+            # line = self.arduino.readline()
+            # line = line.decode('euc-kr') # cp949 euc-kr utf-8
+            # line = line.split()
+            # self.info=line
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             printObjects(objects,self.screen)
@@ -318,6 +340,9 @@ def end():
     #GPIO.cleanup()
     pygame.quit()
     sys.exit(0)
+
+
+
 def main():
     process=Process()
     process.mainScreen()
@@ -328,5 +353,6 @@ if __name__ == "__main__":
 
     
     signal.signal(signal.SIGINT, signal_handler)
+
     
     main()
