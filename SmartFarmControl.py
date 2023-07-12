@@ -60,7 +60,7 @@ class SmartFarmControl():
         self.setPinMode()
 
         
-        self.initializing_end_to_end()
+        # self.initializing_end_to_end()
 
         """
         An initialization function
@@ -77,17 +77,17 @@ class SmartFarmControl():
     def setPinMode(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(MOTOR_X_CW_PIN,OUT)
-        GPIO.setmode(GPIO.BCM)
+        # GPIO.setmode(GPIO.BCM)
         GPIO.setup(MOTOR_X_CLK_PIN,OUT)
 
-        GPIO.setmode(GPIO.BCM)
+        # GPIO.setmode(GPIO.BCM)
         GPIO.setup(MOTOR_Y_CW_PIN,OUT)
-        GPIO.setmode(GPIO.BCM)
+        # GPIO.setmode(GPIO.BCM)
         GPIO.setup(MOTOR_Y_CLK_PIN,OUT)
 
-        GPIO.setmode(GPIO.BCM)
+        # GPIO.setmode(GPIO.BCM)
         GPIO.setup(MOTOR_Z_CW_PIN,OUT)
-        GPIO.setmode(GPIO.BCM)
+        # GPIO.setmode(GPIO.BCM)
         GPIO.setup(MOTOR_Z_CLK_PIN,OUT)
 
         GPIO.setup(END_SWITCH_X1, IN, pull_up_down = GPIO.PUD_DOWN)
@@ -97,13 +97,13 @@ class SmartFarmControl():
 
         GPIO.setup(END_SWITCH_Y1, IN, pull_up_down = GPIO.PUD_DOWN)
         GPIO.setup(END_SWITCH_Y2, IN, pull_up_down = GPIO.PUD_DOWN)
-        GPIO.add_event_detect(END_SWITCH_X1, GPIO.RISING, callback=self.switchYPressed)
-        GPIO.add_event_detect(END_SWITCH_X2, GPIO.RISING, callback=self.switchYPressed)
+        GPIO.add_event_detect(END_SWITCH_Y1, GPIO.RISING, callback=self.switchYPressed)
+        GPIO.add_event_detect(END_SWITCH_Y2, GPIO.RISING, callback=self.switchYPressed)
 
         GPIO.setup(END_SWITCH_Z1, IN, pull_up_down = GPIO.PUD_DOWN)
         GPIO.setup(END_SWITCH_Z2, IN, pull_up_down = GPIO.PUD_DOWN)
-        GPIO.add_event_detect(END_SWITCH_X1, GPIO.RISING, callback=self.switchZPressed)
-        GPIO.add_event_detect(END_SWITCH_X2, GPIO.RISING, callback=self.switchZPressed)
+        GPIO.add_event_detect(END_SWITCH_Z1, GPIO.RISING, callback=self.switchZPressed)
+        GPIO.add_event_detect(END_SWITCH_Z2, GPIO.RISING, callback=self.switchZPressed)
 
     def checkMode(self)->bool:
         for mode in self.modes:
@@ -200,7 +200,17 @@ class SmartFarmControl():
         self.moveMotorsToCoords(dest)
 
     def test(self):
-        self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],Dir.CW)
+        self.setMotorsRotationDir([Motor.Y],True)
+        self.counter=0
+        while True:
+            self.moveMotors([Motor.Y])
+            self.counter+=1
+            print(self.counter)
+            if self.counter==1000:
+                break
+
+
+            ## y,z reverse
 
 
     def initializing_end_to_end(self):
