@@ -223,7 +223,7 @@ class SmartFarmControl():
                 break
 
         
-    def switchXPressed(self):
+    def switchXPressed(self,channel):
         left = GPIO.input(END_SWITCH_X1)
         right= GPIO.input(END_SWITCH_X2)
         if self.modes[0]=="initialization":
@@ -244,7 +244,7 @@ class SmartFarmControl():
                 self.xpos=self.xlen
                 self.setMotorRotationDir(Motor.X,Dir.CCW)
 
-    def switchYPressed(self):
+    def switchYPressed(self,channel):
         left = GPIO.input(END_SWITCH_X1)
         right= GPIO.input(END_SWITCH_X2)
         if self.modes[1]=="initialization":
@@ -265,7 +265,7 @@ class SmartFarmControl():
                 self.ypos=self.ylen
                 self.setMotorRotationDir(Motor.Y,Dir.CCW)
         
-    def switchZPressed(self):
+    def switchZPressed(self,channel):
         left = GPIO.input(END_SWITCH_X1)
         right= GPIO.input(END_SWITCH_X2)
         if self.modes[2]=="initialization":
