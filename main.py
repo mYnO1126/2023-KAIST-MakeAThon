@@ -26,23 +26,37 @@ class Color():
     green=(173,255,0)
 
 class Info():
+    def __init__(self,infos):
+        self.critical=infos[0]
+        self.temp=infos[1]
+        self.status=infos[2]
+    def printInfo(self):
+        return str(self.critical)+" "+str(self.temp)
+
+class potInfo():
     def __init__(self,potBool,infos):
         self.potBool=potBool
         self.infos=infos
-    def updateInfo(self,potBool,infos):
+    def updatePotInfo(self,potBool,infos):
         self.potBool=potBool
         self.infos=infos
-    def returnInfo(self):
-        return self.potBool,self.infos
+    def getPotInfo(self):
+        if self.infos is None:
+            return None
+        return self.infos
+    def returnPotInfo(self):
+        return self.potBool,self.getPotInfo()
 
-class potInfo():
+class potGridInfo():
     def __init__(self,grid=POT_GRID):
         self.grid=grid
-        self.Infos=[Info(True,None) for i in range(grid[0]*grid[1])]
+        self.PotInfos=[potInfo(True,Info((False,25,"Good"))) for i in range(grid[0]*grid[1])]
         for i in range(grid[1]):
-            self.Infos[i].updateInfo(False,None)
-    def returnPotInfo(self,pos):
-        return self.Infos[pos[0]*self.grid[1]+pos[1]].returnInfo()
+            self.PotInfos[i].updatePotInfo(False,None)
+    def returnPotGridInfo(self,pos):
+        return self.PotInfos[pos[0]*self.grid[1]+pos[1]].returnPotInfo()
+    def printPotGridInfo(self):
+        return "aaaa"
     
 
 
@@ -118,14 +132,15 @@ class infoIcon:
         display.blit(text,text_rect)
     
 class Notification:
-    def __init__(self,infos,pos,size,thickness,radius, action = None):
+    def __init__(self,infos,pos,size,thickness,radius,mode, action = None):
         self.info=infos
         self.pos=pos
         self.size=size
         self.thickness=thickness
         self.radius=radius
+        self.mode=mode
         self.action=action
-    def printScreen(self,display):
+    def printScreen(self,display,font):
         color=Color()
         pygame.draw.rect(
             display,
@@ -137,78 +152,159 @@ class Notification:
             self.thickness,
             self.radius,
         )
+        if self.info is None:
+            text=font.render("No Pot Selected",True,color.gray)
+            text_rect=text.get_rect()
+            text_rect.center=self.pos
+            display.blit(text,text_rect)
+        else:
+            temp=self.info.temp
+            status=self.info.status
+            
+            status="Status : "+status
+            text1=font.render(status,True,color.black)
+            text1_rect=text1.get_rect()
+            text1_rect.center=(self.pos[0],self.pos[1]-20)
+
+            tempStr="Temperature (°C): "+str(temp)
+            text2=font.render(tempStr,True,color.black)
+            text2_rect=text2.get_rect()
+            text2_rect.center=(self.pos[0],self.pos[1]+20)
+
+            display.blit(text1,text1_rect)
+            display.blit(text2,text2_rect)
+
+
+
+
+        
+
+    def updateInfo(self,info):
+        self.info=info
     def updateClick(self,display,mouse):
         if self.pos[0] + self.size[0]/2.0 > mouse[0] > self.pos[0]-self.size[0]/2.0 and self.pos[1] + self.size[1]/2.0 > mouse[1] > self.pos[1]-self.size[1]/2.0:
             if self.action is not None:
                     time.sleep(0.2)
                     self.action()
-    # def interaction(self,display,mouse):
-    #     return
+    def interaction(self,display,mouse):
+        return
 
 
 class potGrid:
-    def __init__(self,pos,size,thickness,radius,potInfo, action = None):
+    def __init__(self,pos,size,thickness,radius,potGridInfo, action = None):
         self.pos=pos
         self.action=action
         self.size=size
         self.thickness=thickness
         self.radius=radius
-        self.potInfo=potInfo
+        self.potGridInfo=potGridInfo
 
         self.potSize=65
         self.gap=20
         self.offset=(25,70)
-        self.img=self.drawPotGrid()
-
+        self.selection=False
+        self.selectedPot=[-1,-1]
+        self.selectedInfo=None
+        # self.img=self.drawPotGrid()        
     def printScreen(self,display):
+        self.img=self.drawPotGrid()
         display.blit(self.img,(self.pos[0]-self.size[0]/2,self.pos[1]-self.size[1]/2))
 
     def updateClick(self,display,mouse):
         grid=self.checkMouseGrid(mouse)
         if self.action=="disabled":
             if grid is None:
-                potBool,info=self.potInfo.returnPotInfo(grid)
-                if potBool:
-                    return info
-                else:
-                    return "no pot"
+                return False,None,None,None
             else:
-                print("a")
-        else:
-            return "notification"
+                potBool,info=self.potGridInfo.returnPotGridInfo(grid)
+                if potBool:
+                    return False,info,None,None
+                else:
+                    return False,None,None,None
+        elif self.action=="selection":
+            if grid is None:
+                return False,None,None,None
+            else:
+                potBool,info=self.potGridInfo.returnPotGridInfo(grid)
+                if self.selection:
+                    if potBool:
+                        self.selection=False
+                        return False,None,None,None
+                    else:
+                        self.selection=False
+                        return True,self.selectedInfo,self.selectedPot,grid
+                else:
+                    if potBool:
+                        self.selection=True
+                        self.selectedPot[0]=grid[0]
+                        self.selectedPot[1]=grid[1]       
+                        self.selectedInfo=info                 
+                    return False,info,None,None
+                        
 
-    def updatePotInfo(self,potInfo):
-        self.potInfo=potInfo
+
+    def updatePotGridInfo(self,potGridInfo):
+        self.potGridInfo=potGridInfo
     def drawPotGrid(self):
         color=Color()
         potGridIcon = pygame.Surface(NOTIFICATION_SIZE)
         potGridIcon.fill(color.white)
-        pygame.draw.rect(
-            potGridIcon,
-            color.skyblue,
-            pygame.Rect(
-                (0,0),
-                NOTIFICATION_SIZE,
-            ),
-            self.thickness,
-            self.radius,
-        )
-        x,y=POT_GRID
-        for i in range(x):
-            for j in range(y):
-                potBool,_=self.potInfo.returnPotInfo((i,j))
-                if potBool:
-                    col=color.green
-                else:
-                    col=color.gray
-                pygame.draw.rect(
-                    potGridIcon,
-                    col,
-                    pygame.Rect(
-                        (self.offset[0]+j*(self.potSize+self.gap),self.offset[1]+i*(self.potSize+self.gap)),
-                        (self.potSize,self.potSize),
-                    ),
-                )
+        if self.selection:
+            pygame.draw.rect(
+                potGridIcon,
+                color.skyblue,
+                pygame.Rect(
+                    (0,0),
+                    NOTIFICATION_SIZE,
+                ),
+                self.thickness,
+                self.radius,
+            )
+            x,y=POT_GRID
+            for i in range(x):
+                for j in range(y):
+                    potBool,_=self.potGridInfo.returnPotGridInfo((i,j))
+                    if potBool:
+                        col=color.gray
+                    else:
+                        col=color.green
+                    if i==self.selectedPot[0] and j==self.selectedPot[1]:
+                        col=color.yellow
+                    pygame.draw.rect(
+                        potGridIcon,
+                        col,
+                        pygame.Rect(
+                            (self.offset[0]+j*(self.potSize+self.gap),self.offset[1]+i*(self.potSize+self.gap)),
+                            (self.potSize,self.potSize),
+                        ),
+                    )
+        else:
+            pygame.draw.rect(
+                potGridIcon,
+                color.skyblue,
+                pygame.Rect(
+                    (0,0),
+                    NOTIFICATION_SIZE,
+                ),
+                self.thickness,
+                self.radius,
+            )
+            x,y=POT_GRID
+            for i in range(x):
+                for j in range(y):
+                    potBool,_=self.potGridInfo.returnPotGridInfo((i,j))
+                    if potBool:
+                        col=color.green
+                    else:
+                        col=color.gray
+                    pygame.draw.rect(
+                        potGridIcon,
+                        col,
+                        pygame.Rect(
+                            (self.offset[0]+j*(self.potSize+self.gap),self.offset[1]+i*(self.potSize+self.gap)),
+                            (self.potSize,self.potSize),
+                        ),
+                    )
         return potGridIcon
     def checkMouseGrid(self,mouse):
         grid=[-1,-1]
@@ -229,6 +325,7 @@ class Process:
         pygame.init()
         pygame.font.init()
         self.font=pygame.font.Font('freesansbold.ttf',20)
+        self.noticeFont=pygame.font.Font('freesansbold.ttf',30)
 
         # self.arduino = serial.Serial('COM11', 115200)
 
@@ -248,11 +345,11 @@ class Process:
         clickSettings=pygame.transform.scale(pygame.image.load("images/settings.png"),(40,40))
         self.settingsButton=Button(settingsIcon,(40,560),clickSettings,self.settingsScreen)
 
-        # farmControl=SmartFarmControl.SmartFarmControl()
-        # farmControl.initializing_end_to_end()
+        # self.farmControl=SmartFarmControl.SmartFarmControl()
+        # self.farmControl.initializing_end_to_end()
 
         self.info=[25.0,50.0,True,50.0]
-        self.potInfo=potInfo(POT_GRID)
+        self.potGridInfo=potGridInfo(POT_GRID)
 
     def updateSensorsInfos(self):
         self.arduino.flushInput()
@@ -277,7 +374,7 @@ class Process:
         potSelectionIcon.fill(self.color.white)
         pygame.draw.rect(
             potSelectionIcon,
-            self.color.skyblue,
+            self.color.yellow,
             pygame.Rect(
                 (0,0),
                 NOTIFICATION_SIZE,
@@ -287,7 +384,7 @@ class Process:
         )
         potSelectionIcon.blit(plantIcon,(NOTIFICATION_SIZE[0]/2.0-85,NOTIFICATION_SIZE[1]/2.0-85))
         potSelectionButton=Button(potSelectionIcon,(1024-280,260),potSelectionIcon,self.potSelectionScreen)
-        notification=Notification(None,(280,260),NOTIFICATION_SIZE,15,20,self.notificationScreen)
+        notification=Notification(None,(280,260),NOTIFICATION_SIZE,15,20,"main",self.notificationScreen)
 
         buttons=[self.stopButton,self.settingsButton,potSelectionButton]
         self.infos=[temp,humidity,ventilation,soilHumidity]
@@ -299,7 +396,7 @@ class Process:
             # self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
-            printObjects([notification],self.screen)
+            notification.printScreen(self.screen,self.noticeFont)
             printInfos(self.infos,self.screen,self.info,self.font)
             for button in buttons:
                 button.updateMouseOn(self.screen,mouse)
@@ -314,46 +411,20 @@ class Process:
     def notificationScreen(self):
         backIcon=pygame.transform.scale(pygame.image.load("images/back_icon.png"),(50,50))
         clickBack=pygame.transform.scale(pygame.image.load("images/back_icon.png"),(40,40))
+        potinfo=potInfo(False,None)
 
         backButton = Button(backIcon,(920,40),clickBack,self.mainScreen)
-        notification=Notification(None,(280,260),NOTIFICATION_SIZE,15,20,None)
-        potgrid=potGrid((1024-280,260),NOTIFICATION_SIZE,15,20,self.potInfo,"disabled")
+        notification=Notification(potinfo.getPotInfo(),(280,260),NOTIFICATION_SIZE,15,20,"notice",None)
+        potgrid=potGrid((1024-280,260),NOTIFICATION_SIZE,15,20,self.potGridInfo,"disabled")
         
         buttons=[self.stopButton,self.settingsButton,backButton]
-        objects=[notification,potgrid]
-
+        objects=[potgrid]
+        
         while True:
             # self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
-            printObjects(objects,self.screen)
-            printInfos(self.infos,self.screen,self.info,self.font)
-            for button in buttons:
-                button.updateMouseOn(self.screen,mouse)
-            for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button==1:
-                    for button in buttons:
-                        button.updateClick(self.screen,mouse)
-                    # notification.interaction(self.screen,mouse)
-                    potgrid.updateClick(self.screen,mouse)
-            pygame.display.flip()
-            self.fpsClock.tick(self.fps)
-
-    def potSelectionScreen(self):
-        backIcon=pygame.transform.scale(pygame.image.load("images/back_icon.png"),(50,50))
-        clickBack=pygame.transform.scale(pygame.image.load("images/back_icon.png"),(40,40))
-
-        backButton = Button(backIcon,(920,40),clickBack,self.mainScreen)
-        notification=Notification(None,(1024-280,260),NOTIFICATION_SIZE,15,20,None)
-        #potgrid=potGrid()
-        
-        buttons=[self.stopButton,self.settingsButton,backButton]
-        objects=[notification]
-
-        while True:
-            # self.updateSensorsInfos()
-            self.screen.fill(self.color.white)
-            mouse = pygame.mouse.get_pos()
+            notification.printScreen(self.screen,self.noticeFont)
             printObjects(objects,self.screen)
             printInfos(self.infos,self.screen,self.info,self.font)
             for button in buttons:
@@ -363,6 +434,41 @@ class Process:
                     for button in buttons:
                         button.updateClick(self.screen,mouse)
                     notification.interaction(self.screen,mouse)
+                    _,info,_,_=potgrid.updateClick(self.screen,mouse)
+                    notification.updateInfo(info)
+            pygame.display.flip()
+            self.fpsClock.tick(self.fps)
+
+    def potSelectionScreen(self):
+        backIcon=pygame.transform.scale(pygame.image.load("images/back_icon.png"),(50,50))
+        clickBack=pygame.transform.scale(pygame.image.load("images/back_icon.png"),(40,40))
+
+        backButton = Button(backIcon,(920,40),clickBack,self.mainScreen)
+        notification=Notification(None,(1024-280,260),NOTIFICATION_SIZE,15,20,"potSelect",None)
+        potgrid=potGrid((280,260),NOTIFICATION_SIZE,15,20,self.potGridInfo,"selection")
+        
+        buttons=[self.stopButton,self.settingsButton,backButton]
+        objects=[potgrid]
+
+        while True:
+            # self.updateSensorsInfos()
+            self.screen.fill(self.color.white)
+            mouse = pygame.mouse.get_pos()
+            notification.printScreen(self.screen,self.noticeFont)
+            printInfos(self.infos,self.screen,self.info,self.font)
+            printObjects(objects,self.screen)
+            for button in buttons:
+                button.updateMouseOn(self.screen,mouse)
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button==1:
+                    for button in buttons:
+                        button.updateClick(self.screen,mouse)
+                    move,info,orig,dest=potgrid.updateClick(self.screen,mouse)
+                    notification.updateInfo(info)                        
+                    # if move:
+                    #     self.farmcontrol.moveMotorsOrigDest(orig,dest)
+                        
+
             pygame.display.flip()
             self.fpsClock.tick(self.fps)
 

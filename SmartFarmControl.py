@@ -194,6 +194,10 @@ class SmartFarmControl():
 
         self.moveMotorsDistance(distances)
 
+    def moveMotorsOrigDest(self,orig,dest):
+        self.moveMotorsToCoords(orig)
+        #catch
+        self.moveMotorsToCoords(dest)
 
 
 
