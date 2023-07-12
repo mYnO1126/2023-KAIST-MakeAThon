@@ -4,12 +4,12 @@ from enum import Enum
 import signal                   
 import sys
 
-MOTOR_X_CW_PIN=1
-MOTOR_X_CLK_PIN=2
-MOTOR_Y_CW_PIN=1
-MOTOR_Y_CLK_PIN=2
-MOTOR_Z_CW_PIN=1
-MOTOR_Z_CLK_PIN=2
+MOTOR_X_CW_PIN=20
+MOTOR_X_CLK_PIN=21
+MOTOR_Y_CW_PIN=19
+MOTOR_Y_CLK_PIN=26
+MOTOR_Z_CW_PIN=13
+MOTOR_Z_CLK_PIN=6
 
 END_SWITCH_X1=1
 END_SWITCH_X2=1
@@ -199,16 +199,18 @@ class SmartFarmControl():
         #catch
         self.moveMotorsToCoords(dest)
 
+    def test(self):
+        self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],Dir.CW)
 
 
     def initializing_end_to_end(self):
         self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],Dir.CW)
         self.counter=0
-
         while True:
             self.moveMotors([Motor.X,Motor.Y,Motor.Z])
             self.counter+=1
-            if self.checkMode() is True:
+            print(self.counter)
+            if self.counter==100:
                 break
 
         
