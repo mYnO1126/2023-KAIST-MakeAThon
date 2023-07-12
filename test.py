@@ -41,13 +41,13 @@ class Test():
         GPIO.setup(END_SWITCH_Z2, IN, pull_up_down = GPIO.PUD_UP)
         # GPIO.add_event_detect(END_SWITCH_Z1, GPIO.RISING, callback=self.switchZPressed)
         # GPIO.add_event_detect(END_SWITCH_Z2, GPIO.RISING, callback=self.switchZPressed)
-        def switchXPressed(channel):
-            # left = GPIO.input(END_SWITCH_X1)
-            # right= GPIO.input(END_SWITCH_X2)
-            print("aaa")
-            print(self.a)
-            # print(left)
-            # print(right)
+    def switchXPressed(self,channel):
+        # left = GPIO.input(END_SWITCH_X1)
+        # right= GPIO.input(END_SWITCH_X2)
+        print("aaa")
+        print(self.a)
+        # print(left)
+        # print(right)
 
 
 try:
