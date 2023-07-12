@@ -23,22 +23,36 @@ def switchXPressed(channel):
     print(left)
     print(right)
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(END_SWITCH_X1, IN, pull_up_down = GPIO.PUD_UP)
-GPIO.setup(END_SWITCH_X2, IN, pull_up_down = GPIO.PUD_UP)
-GPIO.add_event_detect(END_SWITCH_X1, GPIO.FALLING, callback=switchXPressed)
-GPIO.add_event_detect(END_SWITCH_X2, GPIO.FALLING, callback=switchXPressed,bouncetime=300)
-GPIO.setup(END_SWITCH_Y1, IN, pull_up_down = GPIO.PUD_UP)
-GPIO.setup(END_SWITCH_Y2, IN, pull_up_down = GPIO.PUD_UP)
-# GPIO.add_event_detect(END_SWITCH_Y1, GPIO.RISING, callback=self.switchYPressed)
-# GPIO.add_event_detect(END_SWITCH_Y2, GPIO.RISING, callback=self.switchYPressed)
 
-GPIO.setup(END_SWITCH_Z1, IN, pull_up_down = GPIO.PUD_UP)
-GPIO.setup(END_SWITCH_Z2, IN, pull_up_down = GPIO.PUD_UP)
-# GPIO.add_event_detect(END_SWITCH_Z1, GPIO.RISING, callback=self.switchZPressed)
-# GPIO.add_event_detect(END_SWITCH_Z2, GPIO.RISING, callback=self.switchZPressed)
+class Test():
+    def setMode(self):        
+        self.a=1
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(END_SWITCH_X1, IN, pull_up_down = GPIO.PUD_UP)
+        GPIO.setup(END_SWITCH_X2, IN, pull_up_down = GPIO.PUD_UP)
+        GPIO.add_event_detect(END_SWITCH_X1, GPIO.FALLING, callback=self.switchXPressed)
+        GPIO.add_event_detect(END_SWITCH_X2, GPIO.FALLING, callback=self.switchXPressed,bouncetime=300)
+        GPIO.setup(END_SWITCH_Y1, IN, pull_up_down = GPIO.PUD_UP)
+        GPIO.setup(END_SWITCH_Y2, IN, pull_up_down = GPIO.PUD_UP)
+        # GPIO.add_event_detect(END_SWITCH_Y1, GPIO.RISING, callback=self.switchYPressed)
+        # GPIO.add_event_detect(END_SWITCH_Y2, GPIO.RISING, callback=self.switchYPressed)
+
+        GPIO.setup(END_SWITCH_Z1, IN, pull_up_down = GPIO.PUD_UP)
+        GPIO.setup(END_SWITCH_Z2, IN, pull_up_down = GPIO.PUD_UP)
+        # GPIO.add_event_detect(END_SWITCH_Z1, GPIO.RISING, callback=self.switchZPressed)
+        # GPIO.add_event_detect(END_SWITCH_Z2, GPIO.RISING, callback=self.switchZPressed)
+        def switchXPressed(channel):
+            # left = GPIO.input(END_SWITCH_X1)
+            # right= GPIO.input(END_SWITCH_X2)
+            print("aaa")
+            print(self.a)
+            # print(left)
+            # print(right)
+
 
 try:
+    test=Test()
+    test.setMode()
     while 1:
         # print(".")
         pin_read = GPIO.input(END_SWITCH_X2)
