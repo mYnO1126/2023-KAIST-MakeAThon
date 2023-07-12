@@ -3,7 +3,7 @@ import time
 import SmartFarmControl
 
 control=SmartFarmControl.SmartFarmControl()
-#control.test()
+control.test()
 # control.initializing_end_to_end()
 
 

@@ -113,11 +113,11 @@ class SmartFarmControl():
 
     def setMotorRotationDir(self,motor,dir):
         if motor==Motor.X:
-            GPIO.output(MOTOR_X_CW_PIN,not dir)
+            GPIO.output(MOTOR_X_CW_PIN,dir)
         elif motor==Motor.Y:
-            GPIO.output(MOTOR_Y_CW_PIN,dir)
+            GPIO.output(MOTOR_Y_CW_PIN,not dir)
         elif motor==Motor.Z:
-            GPIO.output(MOTOR_Z_CW_PIN,dir)
+            GPIO.output(MOTOR_Z_CW_PIN,not dir)
 
     def setMotorsRotationDir(self,motors,dir):
         for motor in motors:
@@ -200,10 +200,10 @@ class SmartFarmControl():
         self.moveMotorsToCoords(dest)
 
     def test(self):
-        self.setMotorsRotationDir([Motor.Z],False)
+        self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],True)
         self.counter=0
         while True:
-            self.moveMotors([Motor.Z])
+            self.moveMotors([Motor.X,Motor.Y,Motor.Z])
             self.counter+=1
             print(self.counter)
             if self.counter==1000:
