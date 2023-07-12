@@ -4,10 +4,10 @@
 
 ## TODO
 
--3차원 step motor 제어
--pygame 등으로 디스플레이 제작, 터치스크린 활용
--센서들 값 읽기 - analog 문제점 확인 - color calculation
--카메라 모듈 장착, 확인
+- 3차원 step motor 제어
+- pygame 등으로 디스플레이 제작, 터치스크린 활용
+- 센서들 값 읽기 - analog 문제점 확인 - color calculation
+- 카메라 모듈 장착, 확인
 
 - 사이드 아크릴, 앞 아크릴, 뚜껑 아크릴 인쇄 및 조립
 - 아두이노 - 센서들& 팬 제어 완성
