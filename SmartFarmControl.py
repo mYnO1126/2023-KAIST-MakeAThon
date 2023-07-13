@@ -116,17 +116,18 @@ class SmartFarmControl():
         GPIO.setup(END_SWITCH_Z2, IN, pull_up_down = GPIO.PUD_UP)
         GPIO.add_event_detect(END_SWITCH_Z1, GPIO.FALLING, callback=self.switchZ1Pressed,bouncetime=300)
         GPIO.add_event_detect(END_SWITCH_Z2, GPIO.FALLING, callback=self.switchZ2Pressed,bouncetime=300)
-
+    def getMotorNum(self,motor):
+        if motor==Motor.X:return 0
+        if motor==Motor.Y:return 1      
+        if motor==Motor.Z:return 2
     def checkMode(self):
         for mode in self.modes:
             if mode=="initialization":
                 return False
         return True
     def checkMotorMode(self,motor):
-        if motor==Motor.X:motor=0
-        if motor==Motor.Y:motor=1       
-        if motor==Motor.Z:motor=2
-        if self.modes[motor]=="initialization":
+        num=self.getMotorNum(motor)
+        if self.modes[num]=="initialization":
             return False
         else:
             return True
@@ -321,7 +322,7 @@ class SmartFarmControl():
                 break
             for motor in motors:
                 if self.checkMotorMode(motor):
-                    if self.counter[Motor.X]==ORIGIN:
+                    if self.counter[self.getMotorNum(motor)]==ORIGIN:
                         motors.remove(motor)
         self.moveMotorsToOrigin()
 
