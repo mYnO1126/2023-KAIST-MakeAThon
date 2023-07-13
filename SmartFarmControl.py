@@ -271,6 +271,9 @@ class SmartFarmControl():
         self.moveMotorsDistance([0,0,-Z_UP_DIST])#Z UP
         self.moveMotorsDistance([0,-Y_IN_DIST,0])#Y IN
 
+        time.sleep(0.1)
+        self.moveMotorsToOrigin()
+
     def test(self):
         self.setMotorsRotationDir([Motor.Y],True)
         counter=0

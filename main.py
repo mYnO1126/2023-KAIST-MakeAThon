@@ -4,7 +4,7 @@ import signal
 import sys
 import pygame
 import serial
-#import SmartFarmControl
+import SmartFarmControl
 import numpy as np
 
 TEMP_LIMIT=3.0
@@ -345,8 +345,8 @@ class Process:
         clickSettings=pygame.transform.scale(pygame.image.load("images/settings.png"),(40,40))
         self.settingsButton=Button(settingsIcon,(40,560),clickSettings,self.settingsScreen)
 
-        # self.farmControl=SmartFarmControl.SmartFarmControl()
-        # self.farmControl.initializing_end_to_end()
+        self.farmControl=SmartFarmControl.SmartFarmControl()
+        self.farmControl.initializing_origin()
 
         self.info=[25.0,50.0,True,50.0]
         self.potGridInfo=potGridInfo(POT_GRID)
@@ -465,8 +465,8 @@ class Process:
                         button.updateClick(self.screen,mouse)
                     move,info,orig,dest=potgrid.updateClick(self.screen,mouse)
                     notification.updateInfo(info)                        
-                    # if move:
-                    #     self.farmcontrol.moveMotorsOrigDest(orig,dest)
+                    if move:
+                        self.farmcontrol.moveMotorsOrigDest(orig,dest)
                         
 
             pygame.display.flip()
