@@ -4,29 +4,32 @@ from enum import Enum
 import signal                   
 import sys
 
-MOTOR_X_CW_PIN=20
-MOTOR_X_CLK_PIN=21
-MOTOR_Y_CW_PIN=19
-MOTOR_Y_CLK_PIN=26
-MOTOR_Z_CW_PIN=13
-MOTOR_Z_CLK_PIN=6
+MOTOR_X_CW_PIN=13
+MOTOR_X_CLK_PIN=6
+MOTOR_Y_CW_PIN=26
+MOTOR_Y_CLK_PIN=19
+MOTOR_Z_CW_PIN=21
+MOTOR_Z_CLK_PIN=20
 
 END_SWITCH_X1=22
 END_SWITCH_X2=23
-END_SWITCH_Y1=24
-END_SWITCH_Y2=25
-END_SWITCH_Z1=17
-END_SWITCH_Z2=27
+END_SWITCH_Y1=25
+END_SWITCH_Y2=24
+END_SWITCH_Z1=27
+END_SWITCH_Z2=17
 
-X_LEN=1.0
-Y_LEN=2.0
-Z_LEN=3.0
+# X_LEN=1.0
+# Y_LEN=2.0
+# Z_LEN=3.0
 
-X_UNIT=1.0
-Z_UNIT=1.0
+X_UNIT=1000
+Z_UNIT=1000
 
-X_OFFSET=1.0
-Z_OFFSET=1.0
+X_OFFSET=100
+Z_OFFSET=100
+
+Y_IN_DIST=1000
+Z_UP_DIST=1000
 
 OUT=GPIO.OUT
 IN=GPIO.IN
@@ -190,14 +193,31 @@ class SmartFarmControl():
         x=coords[0]
         z=coords[1]
 
-        distances=((x*X_UNIT+X_OFFSET)/X_LEN*self.xlen-self.xpos,0,(z*Z_UNIT+Z_OFFSET)/Z_LEN*self.zlen-self.zpos)
+        distances=((x*X_UNIT+X_OFFSET)*self.xlen-self.xpos,0,(z*Z_UNIT+Z_OFFSET)*self.zlen-self.zpos)
 
+        self.moveMotorsDistance(distances)
+
+    def moveMotorsToOrigin(self):
+        distances=(1000-self.xpos,1000-self.ypos,1000-self.zpos)
         self.moveMotorsDistance(distances)
 
     def moveMotorsOrigDest(self,orig,dest):
         self.moveMotorsToCoords(orig)
-        #catch
+        time.sleep(0.1)
+        self.moveMotorsDistance([0,Y_IN_DIST,0])#Y IN
+        time.sleep(0.1)
+        self.moveMotorsDistance([0,0,Z_UP_DIST])#Z UP
+        time.sleep(0.1)
+        self.moveMotorsDistance([0,-Y_IN_DIST,0])#Y IN   
+        time.sleep(0.1)      #catch
+
         self.moveMotorsToCoords(dest)
+        self.moveMotorsDistance([0,0,Z_UP_DIST])#Z UP
+        time.sleep(0.1)
+        self.moveMotorsDistance([0,Y_IN_DIST,0])#Y IN
+        time.sleep(0.1)
+        self.moveMotorsDistance([0,0,-Z_UP_DIST])#Z UP
+        self.moveMotorsDistance([0,-Y_IN_DIST,0])#Y IN
 
     def test(self):
         self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],True)
@@ -213,17 +233,17 @@ class SmartFarmControl():
             ## y,z reverse
 
 
-    def initializing_end_to_end(self):
-        self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],True)
+    def initializing_end_to_end(self,motor):
+        self.setMotorsRotationDir([motor],True)
         self.counter=0
         while True:
-            self.moveMotors([Motor.X,Motor.Y,Motor.Z])
+            self.moveMotors([motor])
             self.counter+=1
             if self.checkMode():
                 break
         self.counter=0
         while True:
-            self.moveMotors([Motor.X,Motor.Y,Motor.Z])
+            self.moveMotors([motor])
             self.counter+=1
             print(self.counter)
             if self.counter==1000:

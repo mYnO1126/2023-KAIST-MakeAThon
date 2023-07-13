@@ -3,8 +3,12 @@ import time
 import SmartFarmControl
 
 control=SmartFarmControl.SmartFarmControl()
-control.test()
-# control.initializing_end_to_end()
+# control.test()
+control.initializing_end_to_end(0)
+
+# control.initializing_end_to_end(1)
+
+# control.initializing_end_to_end(2)
 
 
 # OUT=GPIO.OUT
