@@ -14,20 +14,23 @@ void setup(){
 void loop(){
   DHT.read(DHT11_PIN);
   int light = analogRead(A0);
-  int soil = analogRead(A1);
+  int soil1 = analogRead(A1);
+  int soil2 = analogRead(A2);
+
 
   digitalWrite(RELAY, HIGH);
   
-  // temp humi light soil
+  // temp humi light soil1 soil2
   Serial.print(DHT.temperature);
   Serial.print("  ");
   Serial.print(DHT.humidity);
   Serial.print("  ");
   Serial.print(light);
   Serial.print("  ");
-  Serial.println(soil);
+  Serial.print(soil1);
+  Serial.print("  ");
+  Serial.println(soil2);
 
   
   delay(1000);
-;
 }
