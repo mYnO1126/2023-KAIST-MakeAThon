@@ -19,9 +19,9 @@ END_SWITCH_Y2=25
 END_SWITCH_Z1=27
 END_SWITCH_Z2=17
 
-X_LEN=27217
-Y_LEN=19052
-Z_LEN=26757
+X_LEN=24786
+Y_LEN=14082
+Z_LEN=26762
 
 X_UNIT=9600
 Z_UNIT=10200
@@ -299,17 +299,17 @@ class SmartFarmControl():
 
 
     def initializing_end_to_end(self):
-        self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],True)
+        self.setMotorsRotationDir([Motor.Z],True)
         self.counter=0
         while True:
-            self.moveMotors([Motor.X,Motor.Y,Motor.Z])
+            self.moveMotors([Motor.Z])
             self.counter+=1
-            print(self.counter)
-            if self.checkMode():
+            # print(self.counter)
+            if self.checkMotorMode(Motor.Z):
                 break
         self.counter=0
         while True:
-            self.moveMotors([Motor.X])
+            self.moveMotors([Motor.Z])
             self.counter+=1
             # print(self.counter)
             if self.counter==1000:
@@ -338,6 +338,7 @@ class SmartFarmControl():
             self.xpos=0
             self.xdir=True
             # self.xlen=self.counter-self.xlen
+            # print(self.xlen)
             self.modes[0]="normal"
             self.setMotorRotationDir(Motor.X,True)
         else:
@@ -361,6 +362,7 @@ class SmartFarmControl():
             self.ypos=0
             self.ydir=True
             # self.ylen=self.counter-self.ylen
+            # print(self.ylen)
             self.modes[1]="normal"
             self.setMotorRotationDir(Motor.Y,True)
         else:
@@ -385,6 +387,7 @@ class SmartFarmControl():
             self.zpos=0
             self.zdir=True
             # self.zlen=self.counter-self.zlen
+            # print(self.zlen)
             self.modes[2]="normal"
             self.setMotorRotationDir(Motor.Z,True)
         else:
