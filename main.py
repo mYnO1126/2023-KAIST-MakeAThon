@@ -4,7 +4,7 @@ import signal
 import sys
 import pygame
 import serial
-# import SmartFarmControl
+import SmartFarmControl
 import numpy as np
 
 TEMP_LIMIT=3.0
@@ -57,6 +57,10 @@ class potGridInfo():
         return self.PotInfos[pos[0]*self.grid[1]+pos[1]].returnPotInfo()
     def printPotGridInfo(self):
         return "aaaa"
+    def updatePotGridInfo(self,orig,dest):
+        info=self.PotInfos[orig[0]*self.grid[0]+orig[1]]
+        self.PotInfos[dest[0]*self.grid[0]+dest[1]]=potInfo(info.potBool,info.infos)
+        self.PotInfos[orig[0]*self.grid[0]+orig[1]].updatePotInfo(False,None)
     
 
 
@@ -345,8 +349,8 @@ class Process:
         clickSettings=pygame.transform.scale(pygame.image.load("images/settings.png"),(40,40))
         self.settingsButton=Button(settingsIcon,(40,560),clickSettings,self.settingsScreen)
 
-        # self.farmControl=SmartFarmControl.SmartFarmControl()
-        # self.farmControl.initializing_origin()
+        self.farmControl=SmartFarmControl.SmartFarmControl()
+        self.farmControl.initializing_origin()
 
         self.info=[25.0,50.0,True,50.0]
         self.potGridInfo=potGridInfo(POT_GRID)
@@ -467,6 +471,7 @@ class Process:
                     notification.updateInfo(info)                        
                     if move:
                         self.farmControl.moveMotorsOrigDest(orig,dest)
+                        self.potGridInfo.updatePotGridInfo(orig,dest)
                         
 
             pygame.display.flip()

@@ -40,6 +40,7 @@ IN=GPIO.IN
 ROTATION_T=0.001
 STOP_T=0.001
 ORIGIN=4000
+GRID=(4,3)
 
 class Motor(Enum):
     X = 0
@@ -208,7 +209,12 @@ class SmartFarmControl():
             elif distance==0:
                 updatedDistance.append(0)
         return updatedDistance
+    def calculateCoordDistance(self,coord):
+        x=GRID[0]-coord[0]
+        z=GRID[1]-coord[1]
+        distances=[(x*X_UNIT+X_OFFSET)-self.xpos,Y_OFFSET-self.ypos,(z*Z_UNIT+Z_OFFSET)-self.zpos]
 
+        return distances
     def moveMotorsDistance(self,distances):
         distances=np.array(distances)
         distances=distances.astype(int)
@@ -240,11 +246,7 @@ class SmartFarmControl():
             distances=self.updateDistance(distances)
 
     def moveMotorsToCoords(self,coords):
-        x=coords[0]
-        z=coords[1]
-
-        distances=[(x*X_UNIT+X_OFFSET)-self.xpos,Y_OFFSET-self.ypos,(z*Z_UNIT+Z_OFFSET)-self.zpos]
-
+        distances=self.calculateCoordDistance(coords)
         self.moveMotorsDistance(distances)
 
     def moveMotorsToOrigin(self):
