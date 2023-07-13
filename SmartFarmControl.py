@@ -26,8 +26,9 @@ Z_LEN=26757
 X_UNIT=1000
 Z_UNIT=1000
 
-X_OFFSET=100
-Z_OFFSET=100
+X_OFFSET=4000
+Y_OFFSET=6500
+Z_OFFSET=2200
 
 Y_IN_DIST=1000
 Z_UP_DIST=1000
@@ -239,7 +240,7 @@ class SmartFarmControl():
         x=coords[0]
         z=coords[1]
 
-        distances=[(x*X_UNIT+X_OFFSET)-self.xpos,0,(z*Z_UNIT+Z_OFFSET)-self.zpos]
+        distances=[(x*X_UNIT+X_OFFSET)-self.xpos,Y_OFFSET-self.ypos,(z*Z_UNIT+Z_OFFSET)-self.zpos]
 
         self.moveMotorsDistance(distances)
 
@@ -247,7 +248,7 @@ class SmartFarmControl():
         print(self.xpos)
         print(self.ypos)
         print(self.zpos)
-        distances=[1000-self.xpos,1000-self.ypos,1000-self.zpos]
+        distances=[4000-self.xpos,4000-self.ypos,4000-self.zpos]
         print(distances)
         self.moveMotorsDistance(distances)
 

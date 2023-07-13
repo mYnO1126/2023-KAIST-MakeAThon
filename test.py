@@ -7,7 +7,7 @@ from enum import Enum
 control=SmartFarmControl.SmartFarmControl()
 #control.test()
 # control.moveMotorsDistance([1000,1000,1000])
-# control.initializing_origin()
+control.initializing_origin()
 control.moveMotorsToCoords((0,0))
 
 # control.initializing_end_to_end(1)
