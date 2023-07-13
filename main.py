@@ -391,6 +391,8 @@ class Process:
 
         self.info=[25.0,50.0,0,0,0,False]
         self.potGridInfo=potGridInfo(POT_GRID)
+        self.updateSensorsRealTime=True
+        self.sensorButtonCounter=0
 
     def updateSensorsInfos(self):
         self.arduino.flushInput()
@@ -399,6 +401,16 @@ class Process:
         line = line.split()
         for i in range(5):
             self.info[i]=line[i]
+    def stopSensorUpdate(self):
+        self.sensorButtonCounter+=1
+        if self.sensorButtonCounter%2==1:
+            self.updateSensorsRealTime=False
+            if self.sensorButtonCounter%3==1:
+                self.info=[0,100,0,100,0,True]
+            if self.sensorButtonCounter%3==0:
+                self.info=[50,0,0,0,0,False]
+        else:
+            self.updateSensorsRealTime=True
 
     def mainScreen(self):
         tempIcon=pygame.transform.scale(pygame.image.load("images/temp.jpg"),(50,50))
@@ -437,7 +449,8 @@ class Process:
         while True:
             count+=1
             if count%100==0:
-                self.updateSensorsInfos()
+                if self.updateSensorsRealTime:
+                    self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             notification.printScreen(self.screen,self.noticeFont)
@@ -468,7 +481,8 @@ class Process:
         while True:
             count+=1
             if count%100==0:
-                self.updateSensorsInfos()
+                if self.updateSensorsRealTime:
+                    self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             notification.printScreen(self.screen,self.noticeFont)
@@ -501,7 +515,8 @@ class Process:
         while True:
             count+=1
             if count%100==0:
-                self.updateSensorsInfos()
+                if self.updateSensorsRealTime:
+                    self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             notification.printScreen(self.screen,self.noticeFont)
@@ -531,7 +546,28 @@ class Process:
         clickBack=pygame.transform.scale(pygame.image.load("images/back_icon.png"),(40,40))
 
         backButton = Button(backIcon,(920,40),clickBack,self.mainScreen)
-        buttons=[self.stopButton,self.settingsButton,backButton]
+
+        stopSensorUpdateIcon = pygame.Surface((200,100))
+        stopSensorUpdateIcon.fill(self.color.white)
+        pygame.draw.rect(
+            stopSensorUpdateIcon,
+            self.color.magenta,
+            pygame.Rect(
+                (0,0),
+                (200,100),
+            ),
+            15,
+            20,
+        )
+        text=self.font.render("Stop Sensor Update",True,self.color.magenta)
+        text_rect=text.get_rect()
+        text_rect.center=(100,50)
+        stopSensorUpdateIcon.blit(text,text_rect)
+
+        stopSensorUpdateActIcon = pygame.transform.scale(stopSensorUpdateIcon,(110,60))
+
+        stopSensorUpdateButton=Button(stopSensorUpdateIcon,(300,300),stopSensorUpdateActIcon,self.stopSensorUpdate)
+        buttons=[self.stopButton,self.settingsButton,backButton,stopSensorUpdateButton]
 
         while True:
             self.screen.fill(self.color.white)
