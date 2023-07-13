@@ -258,10 +258,22 @@ class potGrid:
                 return False,None,None,None
             else:
                 potBool,info=self.potGridInfo.returnPotGridInfo(grid)
-                if potBool:
-                    return False,info,None,None
+                if self.selection:
+                    if potBool:
+                        self.selectedPot[0]=grid[0]
+                        self.selectedPot[1]=grid[1]       
+                        self.selectedInfo=info    
+                        return False,info,None,None
+                    else:
+                        self.selection=False
+                        return False,None,None,None
                 else:
-                    return False,None,None,None
+                    if potBool:
+                        self.selection=True
+                        self.selectedPot[0]=grid[0]
+                        self.selectedPot[1]=grid[1]       
+                        self.selectedInfo=info                 
+                    return False,info,None,None
         elif self.action=="selection":
             if grid is None:
                 return False,None,None,None
@@ -290,62 +302,35 @@ class potGrid:
         color=Color()
         potGridIcon = pygame.Surface(NOTIFICATION_SIZE)
         potGridIcon.fill(color.white)
-        if self.selection:
-            pygame.draw.rect(
-                potGridIcon,
-                color.skyblue,
-                pygame.Rect(
-                    (0,0),
-                    NOTIFICATION_SIZE,
-                ),
-                self.thickness,
-                self.radius,
-            )
-            x,y=POT_GRID
-            for i in range(x):
-                for j in range(y):
-                    potBool,_=self.potGridInfo.returnPotGridInfo((i,j))
-                    if potBool:
-                        col=color.gray
-                    else:
-                        col=color.green
-                    if i==self.selectedPot[0] and j==self.selectedPot[1]:
-                        col=color.yellow
-                    pygame.draw.rect(
-                        potGridIcon,
-                        col,
-                        pygame.Rect(
-                            (self.offset[0]+j*(self.potSize+self.gap),self.offset[1]+i*(self.potSize+self.gap)),
-                            (self.potSize,self.potSize),
-                        ),
-                    )
-        else:
-            pygame.draw.rect(
-                potGridIcon,
-                color.skyblue,
-                pygame.Rect(
-                    (0,0),
-                    NOTIFICATION_SIZE,
-                ),
-                self.thickness,
-                self.radius,
-            )
-            x,y=POT_GRID
-            for i in range(x):
-                for j in range(y):
-                    potBool,_=self.potGridInfo.returnPotGridInfo((i,j))
-                    if potBool:
-                        col=color.green
-                    else:
-                        col=color.gray
-                    pygame.draw.rect(
-                        potGridIcon,
-                        col,
-                        pygame.Rect(
-                            (self.offset[0]+j*(self.potSize+self.gap),self.offset[1]+i*(self.potSize+self.gap)),
-                            (self.potSize,self.potSize),
-                        ),
-                    )
+        pygame.draw.rect(
+            potGridIcon,
+            color.skyblue,
+            pygame.Rect(
+                (0,0),
+                NOTIFICATION_SIZE,
+            ),
+            self.thickness,
+            self.radius,
+        )
+        x,y=POT_GRID
+        for i in range(x):
+            for j in range(y):
+                potBool,_=self.potGridInfo.returnPotGridInfo((i,j))
+                if potBool:
+                    col=color.gray
+                else:
+                    col=color.green
+                if i==self.selectedPot[0] and j==self.selectedPot[1]:
+                    col=color.yellow
+                pygame.draw.rect(
+                    potGridIcon,
+                    col,
+                    pygame.Rect(
+                        (self.offset[0]+j*(self.potSize+self.gap),self.offset[1]+i*(self.potSize+self.gap)),
+                        (self.potSize,self.potSize),
+                    ),
+                )
+
         return potGridIcon
     def checkMouseGrid(self,mouse):
         grid=[-1,-1]
