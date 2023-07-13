@@ -106,7 +106,6 @@ class infoIcon:
         color=Color()
         if normal is None:
             if self.name=="humid":
-                print(type(self.info))
                 up=np.array(color.cyan)
                 down=np.array(color.gray)
             if self.name=="soil":
@@ -116,8 +115,8 @@ class infoIcon:
             return down+slope*(self.info-lower_bound)
         else:
             if self.name=="temp":
-                up=np.array(color.cyan)
-                down=np.array(color.magenta)
+                up=np.array(color.magenta)
+                down=np.array(color.cyan)
                 middle=np.array(color.green)
                 if self.info>normal:
                     slope=(up-middle)/(upper_bound-normal)
