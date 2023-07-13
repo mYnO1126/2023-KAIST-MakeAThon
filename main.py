@@ -465,8 +465,8 @@ class Process:
                         button.updateClick(self.screen,mouse)
                     move,info,orig,dest=potgrid.updateClick(self.screen,mouse)
                     notification.updateInfo(info)                        
-                    # if move:
-                    #     self.farmcontrol.moveMotorsOrigDest(orig,dest)
+                    if move:
+                        self.farmControl.moveMotorsOrigDest(orig,dest)
                         
 
             pygame.display.flip()
