@@ -86,9 +86,10 @@ class Button:
                 time.sleep(0.2)
                 self.action()
 class infoIcon:
-    def __init__(self,img_in,info,unit,pos,size,thickness,radius,range):
+    def __init__(self,img_in,name,info,unit,pos,size,thickness,radius,range):
         color=Color()
         self.img=img_in
+        self.name=name
         self.info=info
         self.unit=unit
         self.pos=pos
@@ -102,7 +103,17 @@ class infoIcon:
         self.info=info
     def calculateColor(self):
         color=Color()
-        # if self.unit=="°C":
+        # if self.name=="temp":
+        #     self.color=
+        
+        # if self.unit=="humid":
+        #     self.color=
+
+        # if self.unit=="vent":
+        #     if 
+        #     self.color=
+
+        # if self.unit=="soil":
         #     self.color=
         
     def printScreen(self,display,info,font):
@@ -370,10 +381,10 @@ class Process:
         soilHumidityIcon=pygame.transform.scale(pygame.image.load("images/soil-humid.png"),(50,50))
         plantIcon=pygame.transform.scale(pygame.image.load("images/plant.png"),(170,170))
        
-        temp=infoIcon(tempIcon,25,"°C",(212-45,520),INFO_ICON_SIZE,10,5,TEMP_LIMIT)
-        humidity=infoIcon(humidityIcon,50,"%",(412-15,520),INFO_ICON_SIZE,10,5,HUMID_LIMIT)
-        ventilation=infoIcon(ventilationIcon,False,"",(612+15,520),INFO_ICON_SIZE,10,5,0)
-        soilHumidity=infoIcon(soilHumidityIcon,50,"%",(812+45,520),INFO_ICON_SIZE,10,5,SOIL_LIMIT)
+        temp=infoIcon(tempIcon,"temp",25,"°C",(212-45,520),INFO_ICON_SIZE,10,5,TEMP_LIMIT)
+        humidity=infoIcon(humidityIcon,"humid",50,"%",(412-15,520),INFO_ICON_SIZE,10,5,HUMID_LIMIT)
+        ventilation=infoIcon(ventilationIcon,"vent",False,"",(612+15,520),INFO_ICON_SIZE,10,5,0)
+        soilHumidity=infoIcon(soilHumidityIcon,"soil",50,"%",(812+45,520),INFO_ICON_SIZE,10,5,SOIL_LIMIT)
 
         potSelectionIcon = pygame.Surface(NOTIFICATION_SIZE)
         potSelectionIcon.fill(self.color.white)
