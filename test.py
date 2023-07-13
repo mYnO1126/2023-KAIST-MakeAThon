@@ -1,10 +1,12 @@
 import RPi.GPIO as GPIO
 import time
 import SmartFarmControl
+from enum import Enum
+
 
 control=SmartFarmControl.SmartFarmControl()
-# control.test()
-control.initializing_end_to_end(0)
+control.test()
+# control.initializing_origin()
 
 # control.initializing_end_to_end(1)
 

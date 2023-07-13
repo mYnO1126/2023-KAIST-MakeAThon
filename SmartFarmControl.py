@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 from enum import Enum
+import numpy as np
 import signal                   
 import sys
 
@@ -13,14 +14,14 @@ MOTOR_Z_CLK_PIN=20
 
 END_SWITCH_X1=22
 END_SWITCH_X2=23
-END_SWITCH_Y1=25
-END_SWITCH_Y2=24
+END_SWITCH_Y1=24
+END_SWITCH_Y2=25
 END_SWITCH_Z1=27
 END_SWITCH_Z2=17
 
-# X_LEN=1.0
-# Y_LEN=2.0
-# Z_LEN=3.0
+X_LEN=27217
+Y_LEN=19052
+Z_LEN=26757
 
 X_UNIT=1000
 Z_UNIT=1000
@@ -58,6 +59,8 @@ class SmartFarmControl():
         self.xcounter=0
         self.ycounter=0
         self.zcounter=0
+
+        self.emergencyStop=False
         
         self.modes=["initialization" for i in range(3)]
         self.setPinMode()
@@ -108,11 +111,19 @@ class SmartFarmControl():
         GPIO.add_event_detect(END_SWITCH_Z1, GPIO.FALLING, callback=self.switchZ1Pressed,bouncetime=300)
         GPIO.add_event_detect(END_SWITCH_Z2, GPIO.FALLING, callback=self.switchZ2Pressed,bouncetime=300)
 
-    def checkMode(self)->bool:
+    def checkMode(self):
         for mode in self.modes:
             if mode=="initialization":
                 return False
         return True
+    def checkMotorMode(self,motor):
+        if motor==Motor.X:motor=0
+        if motor==Motor.Y:motor=1       
+        if motor==Motor.Z:motor=2
+        if self.modes[motor]=="initialization":
+            return False
+        else:
+            return True
 
     def setMotorRotationDir(self,motor,dir):
         if motor==Motor.X:
@@ -220,12 +231,16 @@ class SmartFarmControl():
         self.moveMotorsDistance([0,-Y_IN_DIST,0])#Y IN
 
     def test(self):
-        self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],True)
+        self.setMotorsRotationDir([Motor.Y],True)
+        counter=0
         self.counter=0
         while True:
-            self.moveMotors([Motor.X,Motor.Y,Motor.Z])
+            self.moveMotors([Motor.Y])
             self.counter+=1
             print(self.counter)
+            # if self.emergencyStop==True:
+            #     counter+=1
+            #     if counter==100:break
             if self.counter==1000:
                 break
 
@@ -233,21 +248,36 @@ class SmartFarmControl():
             ## y,z reverse
 
 
-    def initializing_end_to_end(self,motor):
-        self.setMotorsRotationDir([motor],True)
+    def initializing_end_to_end(self):
+        self.setMotorsRotationDir([Motor.X,Motor.Y,Motor.Z],True)
         self.counter=0
         while True:
-            self.moveMotors([motor])
+            self.moveMotors([Motor.X,Motor.Y,Motor.Z])
             self.counter+=1
+            print(self.counter)
             if self.checkMode():
                 break
         self.counter=0
         while True:
-            self.moveMotors([motor])
+            self.moveMotors([Motor.X])
             self.counter+=1
             print(self.counter)
             if self.counter==1000:
                 break
+        
+    def initializing_origin(self):
+        motors=[Motor.X,Motor.Y,Motor.Z]
+        self.setMotorsRotationDir(motors,False)
+        self.counter=np.zeros(3)
+        while True:
+            self.moveMotors(motors)
+            self.counter+=1
+            if self.checkMode():
+                break
+            # for motor in motors:
+            #     if self.checkMotorMode(motor):
+            #         motors.remove(motor)
+        self.moveMotorsToOrigin()
 
         
     def switchX1Pressed(self,channel):
@@ -285,6 +315,7 @@ class SmartFarmControl():
             print("y2")
             self.ylen=self.counter
             self.setMotorRotationDir(Motor.Y,False)
+            self.emergencyStop=True
         else:
             self.ypos=self.ylen
             self.setMotorRotationDir(Motor.Y,False)
