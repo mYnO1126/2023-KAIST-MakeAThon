@@ -470,6 +470,8 @@ class Process:
                     move,info,orig,dest=potgrid.updateClick(self.screen,mouse)
                     notification.updateInfo(info)                        
                     if move:
+                        print(orig)
+                        print(dest)
                         self.farmControl.moveMotorsOrigDest(orig,dest)
                         self.potGridInfo.updatePotGridInfo(orig,dest)
                         

@@ -37,10 +37,10 @@ Z_UP_DIST=3500
 OUT=GPIO.OUT
 IN=GPIO.IN
 
-ROTATION_T=0.001
-STOP_T=0.001
+ROTATION_T=0.0001
+STOP_T=0.0001
 ORIGIN=4000
-GRID=(4,3)
+GRID=(3,4)
 
 class Motor(Enum):
     X = 0
@@ -210,15 +210,17 @@ class SmartFarmControl():
                 updatedDistance.append(0)
         return updatedDistance
     def calculateCoordDistance(self,coord):
-        x=GRID[0]-coord[0]
-        z=GRID[1]-coord[1]
+        x=GRID[1]-coord[1]-1
+        z=GRID[0]-coord[0]-1
+        print(x)
+        print(z)
         distances=[(x*X_UNIT+X_OFFSET)-self.xpos,Y_OFFSET-self.ypos,(z*Z_UNIT+Z_OFFSET)-self.zpos]
 
         return distances
     def moveMotorsDistance(self,distances):
         distances=np.array(distances)
         distances=distances.astype(int)
-        print(distances)
+        # print(distances)
         if distances[0]>=0:
             if distances[0]+self.xpos>=self.xlen:
                 distances[0]=self.xlen-self.xpos-1
@@ -238,7 +240,7 @@ class SmartFarmControl():
             if distances[2]+self.zpos<=0:
                 distances[2]=-self.zpos+1
         maxdist=max(abs(distances))
-        print(distances)
+        # print(distances)
         self.setMotorsDir(distances)
         for i in range(maxdist):
             # print(self.movableMotors(distances))
@@ -250,11 +252,11 @@ class SmartFarmControl():
         self.moveMotorsDistance(distances)
 
     def moveMotorsToOrigin(self):
-        print(self.xpos)
-        print(self.ypos)
-        print(self.zpos)
+        # print(self.xpos)
+        # print(self.ypos)
+        # print(self.zpos)
         distances=[ORIGIN-self.xpos,ORIGIN-self.ypos,ORIGIN-self.zpos]
-        print(distances)
+        # print(distances)
         self.moveMotorsDistance(distances)
 
     def moveMotorsOrigDest(self,orig,dest):
@@ -309,7 +311,7 @@ class SmartFarmControl():
         while True:
             self.moveMotors([Motor.X])
             self.counter+=1
-            print(self.counter)
+            # print(self.counter)
             if self.counter==1000:
                 break
         
