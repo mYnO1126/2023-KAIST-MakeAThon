@@ -331,7 +331,7 @@ class Process:
         self.font=pygame.font.Font('freesansbold.ttf',20)
         self.noticeFont=pygame.font.Font('freesansbold.ttf',30)
 
-        # self.arduino = serial.Serial('COM11', 115200)
+        self.arduino = serial.Serial('/dev/ttyACM0', 115200)
 
         self.color=Color()
         resolution = (1024,600)
@@ -352,7 +352,7 @@ class Process:
         self.farmControl=SmartFarmControl.SmartFarmControl()
         self.farmControl.initializing_origin()
 
-        self.info=[25.0,50.0,True,50.0]
+        self.info=[25.0,50.0,0,0,0,False]
         self.potGridInfo=potGridInfo(POT_GRID)
 
     def updateSensorsInfos(self):
@@ -360,7 +360,8 @@ class Process:
         line = self.arduino.readline()
         line = line.decode('euc-kr') # cp949 euc-kr utf-8
         line = line.split()
-        self.info=line
+        for i in range(len(self.info)):
+            self.info[i]=line[i]
 
     def mainScreen(self):
         tempIcon=pygame.transform.scale(pygame.image.load("images/temp.jpg"),(50,50))
@@ -397,7 +398,7 @@ class Process:
         # printObjects(buttons,self.screen)
 
         while True:
-            # self.updateSensorsInfos()
+            self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             notification.printScreen(self.screen,self.noticeFont)
@@ -425,7 +426,7 @@ class Process:
         objects=[potgrid]
         
         while True:
-            # self.updateSensorsInfos()
+            self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             notification.printScreen(self.screen,self.noticeFont)
@@ -455,7 +456,7 @@ class Process:
         objects=[potgrid]
 
         while True:
-            # self.updateSensorsInfos()
+            self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             notification.printScreen(self.screen,self.noticeFont)
@@ -500,8 +501,12 @@ class Process:
             self.fpsClock.tick(self.fps)
 
 def printInfos(infos,display,newInfo,font):
-    for i in range(len(infos)):
-        infos[i].printScreen(display,newInfo[i],font)
+    infos[0].printScreen(display,newInfo[0],font) #temp
+    infos[1].printScreen(display,newInfo[1],font) #humidity
+    infos[2].printScreen(display,newInfo[5],font) #ventilation
+    infos[3].printScreen(display,newInfo[3],font) #soil
+    # for i in range(len(infos)):
+    #     infos[i].printScreen(display,newInfo[i],font)
 
 
 def printObjects(objects,display):
