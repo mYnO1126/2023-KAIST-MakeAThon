@@ -255,6 +255,7 @@ class potGrid:
         grid=self.checkMouseGrid(mouse)
         if self.action=="disabled":
             if grid is None:
+                self.selection=False
                 return False,None,None,None
             else:
                 potBool,info=self.potGridInfo.returnPotGridInfo(grid)
@@ -272,8 +273,11 @@ class potGrid:
                         self.selection=True
                         self.selectedPot[0]=grid[0]
                         self.selectedPot[1]=grid[1]       
-                        self.selectedInfo=info                 
+                        self.selectedInfo=info              
+                    else:
+                        self.selection=False   
                     return False,info,None,None
+                
         elif self.action=="selection":
             if grid is None:
                 return False,None,None,None
@@ -303,34 +307,64 @@ class potGrid:
         potGridIcon = pygame.Surface(NOTIFICATION_SIZE)
         potGridIcon.fill(color.white)
         if self.selection:
-            pygame.draw.rect(
-                potGridIcon,
-                color.skyblue,
-                pygame.Rect(
-                    (0,0),
-                    NOTIFICATION_SIZE,
-                ),
-                self.thickness,
-                self.radius,
-            )
-            x,y=POT_GRID
-            for i in range(x):
-                for j in range(y):
-                    potBool,_=self.potGridInfo.returnPotGridInfo((i,j))
-                    if potBool:
-                        col=color.gray
-                    else:
-                        col=color.green
-                    if i==self.selectedPot[0] and j==self.selectedPot[1]:
-                        col=color.yellow
-                    pygame.draw.rect(
-                        potGridIcon,
-                        col,
-                        pygame.Rect(
-                            (self.offset[0]+j*(self.potSize+self.gap),self.offset[1]+i*(self.potSize+self.gap)),
-                            (self.potSize,self.potSize),
-                        ),
-                    )
+            if self.action=="disabled":
+                pygame.draw.rect(
+                    potGridIcon,
+                    color.skyblue,
+                    pygame.Rect(
+                        (0,0),
+                        NOTIFICATION_SIZE,
+                    ),
+                    self.thickness,
+                    self.radius,
+                )
+                x,y=POT_GRID
+                for i in range(x):
+                    for j in range(y):
+                        potBool,_=self.potGridInfo.returnPotGridInfo((i,j))
+                        if potBool:
+                            col=color.green
+                        else:
+                            col=color.gray
+                        if i==self.selectedPot[0] and j==self.selectedPot[1]:
+                            col=color.yellow
+                        pygame.draw.rect(
+                            potGridIcon,
+                            col,
+                            pygame.Rect(
+                                (self.offset[0]+j*(self.potSize+self.gap),self.offset[1]+i*(self.potSize+self.gap)),
+                                (self.potSize,self.potSize),
+                            ),
+                        )
+            elif self.action=="selection":
+                pygame.draw.rect(
+                    potGridIcon,
+                    color.skyblue,
+                    pygame.Rect(
+                        (0,0),
+                        NOTIFICATION_SIZE,
+                    ),
+                    self.thickness,
+                    self.radius,
+                )
+                x,y=POT_GRID
+                for i in range(x):
+                    for j in range(y):
+                        potBool,_=self.potGridInfo.returnPotGridInfo((i,j))
+                        if potBool:
+                            col=color.gray
+                        else:
+                            col=color.green
+                        if i==self.selectedPot[0] and j==self.selectedPot[1]:
+                            col=color.yellow
+                        pygame.draw.rect(
+                            potGridIcon,
+                            col,
+                            pygame.Rect(
+                                (self.offset[0]+j*(self.potSize+self.gap),self.offset[1]+i*(self.potSize+self.gap)),
+                                (self.potSize,self.potSize),
+                            ),
+                        )
         else:
             pygame.draw.rect(
                 potGridIcon,
