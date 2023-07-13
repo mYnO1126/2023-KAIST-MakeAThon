@@ -106,6 +106,7 @@ class infoIcon:
         color=Color()
         if normal is None:
             if self.name=="humid":
+                print(type(self.info))
                 up=np.array(color.cyan)
                 down=np.array(color.gray)
             if self.name=="soil":
@@ -129,14 +130,14 @@ class infoIcon:
         color=Color()
         if self.name=="temp":
             self.color=self.calculateColor(50,25,0)
-        if self.unit=="humid":
+        if self.name=="humid":
             self.color=self.color=self.calculateColor(100,None,0)
-        if self.unit=="vent":
+        if self.name=="vent":
             if self.info==True:
                 self.color=color.cyan
             else:
                 self.color=color.magenta
-        if self.unit=="soil":
+        if self.name=="soil":
             self.color=self.calculateColor(100,None,0)
         
     def printScreen(self,display,info,font):
