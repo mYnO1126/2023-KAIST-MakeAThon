@@ -39,6 +39,7 @@ IN=GPIO.IN
 
 ROTATION_T=0.001
 STOP_T=0.001
+ORIGIN=4000
 
 class Motor(Enum):
     X = 0
@@ -249,7 +250,7 @@ class SmartFarmControl():
         print(self.xpos)
         print(self.ypos)
         print(self.zpos)
-        distances=[4000-self.xpos,4000-self.ypos,4000-self.zpos]
+        distances=[ORIGIN-self.xpos,ORIGIN-self.ypos,ORIGIN-self.zpos]
         print(distances)
         self.moveMotorsDistance(distances)
 
@@ -318,15 +319,17 @@ class SmartFarmControl():
             self.counter+=1
             if self.checkMode():
                 break
-            # for motor in motors:
-            #     if self.checkMotorMode(motor):
-            #         motors.remove(motor)
+            for motor in motors:
+                if self.checkMotorMode(motor):
+                    if self.counter[Motor.X]==ORIGIN:
+                        motors.remove(motor)
         self.moveMotorsToOrigin()
 
         
     def switchX1Pressed(self,channel):
         if self.modes[0]=="initialization":
             print("x1")
+            self.counter[0]=0
             self.xpos=0
             self.xdir=True
             # self.xlen=self.counter-self.xlen
@@ -349,6 +352,7 @@ class SmartFarmControl():
     def switchY1Pressed(self,channel):
         if self.modes[1]=="initialization":
             print("y1")
+            self.counter[1]=0
             self.ypos=0
             self.ydir=True
             # self.ylen=self.counter-self.ylen
@@ -371,6 +375,7 @@ class SmartFarmControl():
             self.setMotorRotationDir(Motor.Y,False)
     def switchZ1Pressed(self,channel):
         if self.modes[2]=="initialization":
+            self.counter[2]=0
             print("z1")
             self.zpos=0
             self.zdir=True
