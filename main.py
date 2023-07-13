@@ -101,24 +101,47 @@ class infoIcon:
     
     def updateInfo(self,info):
         self.info=info
-    def calculateColor(self):
+
+    def calculateColor(self,upper_bound,normal,lower_bound):
         color=Color()
-        # if self.name=="temp":
-        #     self.color=
-        
-        # if self.unit=="humid":
-        #     self.color=
+        if normal is None:
+            if self.name=="humid":
+                up=np.array(color.cyan)
+                down=np.array(color.gray)
+            if self.name=="soil":
+                up=np.array(color.skyblue)
+                down=np.array(color.yellow)
+            slope=(up-down)/(upper_bound-lower_bound)
+            return down+slope*(self.info-lower_bound)
+        else:
+            if self.name=="temp":
+                up=np.array(color.cyan)
+                down=np.array(color.magenta)
+                middle=np.array(color.green)
+                if self.info>normal:
+                    slope=(up-middle)/(upper_bound-normal)
+                    return middle+slope*(upper_bound-self.info)
+                else:
+                    slope=(middle-down)/(normal-lower_bound)
+                    return middle-slope*(self.info-lower_bound)
 
-        # if self.unit=="vent":
-        #     if 
-        #     self.color=
-
-        # if self.unit=="soil":
-        #     self.color=
+    def setColor(self):
+        color=Color()
+        if self.name=="temp":
+            self.color=self.calculateColor(50,25,0)
+        if self.unit=="humid":
+            self.color=self.color=self.calculateColor(100,None,0)
+        if self.unit=="vent":
+            if self.info==True:
+                self.color=color.cyan
+            else:
+                self.color=color.magenta
+        if self.unit=="soil":
+            self.color=self.calculateColor(100,None,0)
         
     def printScreen(self,display,info,font):
         self.updateInfo(info)
-        self.calculateColor()
+        self.setColor()
         pygame.draw.rect(
             display,
             self.color,
@@ -142,9 +165,9 @@ class infoIcon:
                 text_rect.center=(self.pos[0]+25,self.pos[1])
         else:
             if type(self.info) is not str:
-                self.info=str(self.info)
-
-            text=font.render(self.info+self.unit,True,self.color)
+                text=font.render(str(self.info)+self.unit,True,self.color)
+            else:
+                text=font.render(self.info+self.unit,True,self.color)
             text_rect=text.get_rect()
             text_rect.center=(self.pos[0]+25,self.pos[1])
         display.blit(text,text_rect)
@@ -523,10 +546,10 @@ class Process:
             self.fpsClock.tick(self.fps)
 
 def printInfos(infos,display,newInfo,font):
-    infos[0].printScreen(display,newInfo[0],font) #temp
-    infos[1].printScreen(display,newInfo[1],font) #humidity
+    infos[0].printScreen(display,int(newInfo[0]),font) #temp
+    infos[1].printScreen(display,int(newInfo[1]),font) #humidity
     infos[2].printScreen(display,newInfo[5],font) #ventilation
-    infos[3].printScreen(display,newInfo[3],font) #soil
+    infos[3].printScreen(display,int(newInfo[3]),font) #soil
     # for i in range(len(infos)):
     #     infos[i].printScreen(display,newInfo[i],font)
 
