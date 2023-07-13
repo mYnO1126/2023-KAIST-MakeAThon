@@ -10,6 +10,19 @@ control=SmartFarmControl.SmartFarmControl()
 control.initializing_origin()
 control.moveMotorsToCoords((0,0))
 
+try:
+    # test=Test()
+    # test.setMode()
+    while 1:
+        # print(".")
+        # pin_read = GPIO.input(END_SWITCH_X2)
+        # print(pin_read)
+        x, y,z = map(int, input('Input distance x,y,z: ').split())
+        control.moveMotorsDistance([x,y,z])
+        time.sleep(0.1)
+finally:
+    GPIO.cleanup()
+
 # control.initializing_end_to_end(1)
 
 # control.initializing_end_to_end(2)
