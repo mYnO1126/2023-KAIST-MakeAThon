@@ -130,7 +130,10 @@ class infoIcon:
                 text_rect=text.get_rect()
                 text_rect.center=(self.pos[0]+25,self.pos[1])
         else:
-            text=font.render(str(round(self.info,1))+self.unit,True,self.color)
+            if type(self.info) is not str:
+                self.info=str(self.info)
+
+            text=font.render(self.info+self.unit,True,self.color)
             text_rect=text.get_rect()
             text_rect.center=(self.pos[0]+25,self.pos[1])
         display.blit(text,text_rect)
@@ -360,7 +363,7 @@ class Process:
         line = self.arduino.readline()
         line = line.decode('euc-kr') # cp949 euc-kr utf-8
         line = line.split()
-        for i in range(len(self.info)):
+        for i in range(5):
             self.info[i]=line[i]
 
     def mainScreen(self):
@@ -396,9 +399,11 @@ class Process:
 
         # printInfos(infos,self.screen,info,self.font)
         # printObjects(buttons,self.screen)
-
+        count=0
         while True:
-            self.updateSensorsInfos()
+            count+=1
+            if count%100==0:
+                self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             notification.printScreen(self.screen,self.noticeFont)
@@ -425,8 +430,11 @@ class Process:
         buttons=[self.stopButton,self.settingsButton,backButton]
         objects=[potgrid]
         
+        count=0
         while True:
-            self.updateSensorsInfos()
+            count+=1
+            if count%100==0:
+                self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             notification.printScreen(self.screen,self.noticeFont)
@@ -455,8 +463,11 @@ class Process:
         buttons=[self.stopButton,self.settingsButton,backButton]
         objects=[potgrid]
 
+        count=0
         while True:
-            self.updateSensorsInfos()
+            count+=1
+            if count%100==0:
+                self.updateSensorsInfos()
             self.screen.fill(self.color.white)
             mouse = pygame.mouse.get_pos()
             notification.printScreen(self.screen,self.noticeFont)
