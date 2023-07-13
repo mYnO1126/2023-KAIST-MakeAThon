@@ -8,7 +8,10 @@ control=SmartFarmControl.SmartFarmControl()
 #control.test()
 # control.moveMotorsDistance([1000,1000,1000])
 control.initializing_origin()
-control.moveMotorsToCoords((0,0))
+control.moveMotorsToCoords((2,2))
+# control.moveMotorsDistance([0,6400,0])
+# control.moveMotorsDistance([0,0,3500])
+# control.moveMotorsDistance([0,-7000,0])
 
 try:
     # test=Test()
@@ -25,7 +28,7 @@ finally:
 
 # control.initializing_end_to_end(1)
 
-# control.initializing_end_to_end(2)
+# control.initializing_end_to_end(2)4200
 GPIO.cleanup()
 
 # OUT=GPIO.OUT
@@ -42,7 +45,7 @@ GPIO.cleanup()
 # # def switchXPressed(channel):
 # #     left = GPIO.input(END_SWITCH_X1)
 # #     right= GPIO.input(END_SWITCH_X2)
-# #     print("aaa")
+# #     print("aaa")0
 # #     print(left)
 # #     print(right)
 

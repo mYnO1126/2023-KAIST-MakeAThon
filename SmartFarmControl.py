@@ -23,15 +23,16 @@ X_LEN=27217
 Y_LEN=19052
 Z_LEN=26757
 
-X_UNIT=1000
-Z_UNIT=1000
+X_UNIT=9600
+Z_UNIT=10200
 
-X_OFFSET=4000
+X_OFFSET=4200
 Y_OFFSET=6500
-Z_OFFSET=2200
+Z_OFFSET=3000
 
-Y_IN_DIST=1000
-Z_UP_DIST=1000
+Y_IN_DIST=6400
+Y_OUT_DIST=-7000
+Z_UP_DIST=3500
 
 OUT=GPIO.OUT
 IN=GPIO.IN
@@ -82,7 +83,7 @@ class SmartFarmControl():
         dest: destination of passenger
 
         state: one of WAIT, ONBOARD, ARRIVAL
-            
+            4200
         """
     def setPinMode(self):
         GPIO.setmode(GPIO.BCM)
@@ -229,7 +230,7 @@ class SmartFarmControl():
             if distances[2]+self.zpos<=0:
                 distances[2]=-self.zpos+1
         maxdist=max(abs(distances))
-        print(maxdist)
+        print(distances)
         self.setMotorsDir(distances)
         for i in range(maxdist):
             # print(self.movableMotors(distances))
@@ -259,7 +260,7 @@ class SmartFarmControl():
         time.sleep(0.1)
         self.moveMotorsDistance([0,0,Z_UP_DIST])#Z UP
         time.sleep(0.1)
-        self.moveMotorsDistance([0,-Y_IN_DIST,0])#Y IN   
+        self.moveMotorsDistance([0,Y_OUT_DIST,0])#Y IN   
         time.sleep(0.1)      #catch
 
         self.moveMotorsToCoords(dest)
