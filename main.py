@@ -474,6 +474,7 @@ class Process:
                         print(dest)
                         self.farmControl.moveMotorsOrigDest(orig,dest)
                         self.potGridInfo.updatePotGridInfo(orig,dest)
+                        notification.updateInfo(None) 
                         
 
             pygame.display.flip()
