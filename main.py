@@ -123,7 +123,7 @@ class infoIcon:
                     return middle+slope*(upper_bound-self.info)
                 else:
                     slope=(middle-down)/(normal-lower_bound)
-                    return middle-slope*(self.info-lower_bound)
+                    return down+slope*(self.info-lower_bound)
 
     def setColor(self):
         color=Color()
