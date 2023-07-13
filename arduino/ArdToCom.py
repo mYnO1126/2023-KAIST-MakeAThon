@@ -1,7 +1,7 @@
 import serial
 import os
 
-arduino = serial.Serial('COM11', 115200)
+arduino = serial.Serial('/dev/ttyACM0', 115200)
 
 while 1:
     arduino.flushInput()
