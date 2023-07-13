@@ -176,7 +176,7 @@ class SmartFarmControl():
         return updatedDistance
 
     def moveMotorsDistance(self,distances):
-        distances=int(distances)
+        distances=distances.astype(int)
         if distances[0]>=0:
             if distances[0]+self.xpos>=self.xlen:
                 distances[0]=self.xlen-self.xpos-1
@@ -204,12 +204,12 @@ class SmartFarmControl():
         x=coords[0]
         z=coords[1]
 
-        distances=((x*X_UNIT+X_OFFSET)*self.xlen-self.xpos,0,(z*Z_UNIT+Z_OFFSET)*self.zlen-self.zpos)
+        distances=[(x*X_UNIT+X_OFFSET)*self.xlen-self.xpos,0,(z*Z_UNIT+Z_OFFSET)*self.zlen-self.zpos]
 
         self.moveMotorsDistance(distances)
 
     def moveMotorsToOrigin(self):
-        distances=(1000-self.xpos,1000-self.ypos,1000-self.zpos)
+        distances=[1000-self.xpos,1000-self.ypos,1000-self.zpos]
         self.moveMotorsDistance(distances)
 
     def moveMotorsOrigDest(self,orig,dest):
@@ -284,8 +284,7 @@ class SmartFarmControl():
         if self.modes[0]=="initialization":
             print("x1")
             self.xpos=0
-            self.xlen=self.counter-self.xlen
-            print("xlen: "+str(self.xlen))
+            # self.xlen=self.counter-self.xlen
             self.modes[0]="normal"
             self.setMotorRotationDir(Motor.X,True)
         else:
@@ -294,7 +293,7 @@ class SmartFarmControl():
     def switchX2Pressed(self,channel):
         if self.modes[0]=="initialization":
             print("x2")
-            self.xlen=self.counter
+            # self.xlen=self.counter
             self.setMotorRotationDir(Motor.X,False)
         else:
             self.xpos=self.xlen
@@ -303,8 +302,7 @@ class SmartFarmControl():
         if self.modes[1]=="initialization":
             print("y1")
             self.ypos=0
-            self.ylen=self.counter-self.ylen
-            print("ylen: "+str(self.ylen))
+            # self.ylen=self.counter-self.ylen
             self.modes[1]="normal"
             self.setMotorRotationDir(Motor.Y,True)
         else:
@@ -313,7 +311,7 @@ class SmartFarmControl():
     def switchY2Pressed(self,channel):
         if self.modes[1]=="initialization":
             print("y2")
-            self.ylen=self.counter
+            # self.ylen=self.counter
             self.setMotorRotationDir(Motor.Y,False)
             self.emergencyStop=True
         else:
@@ -323,8 +321,7 @@ class SmartFarmControl():
         if self.modes[2]=="initialization":
             print("z1")
             self.zpos=0
-            self.zlen=self.counter-self.zlen
-            print("zlen: "+str(self.zlen))
+            # self.zlen=self.counter-self.zlen
             self.modes[2]="normal"
             self.setMotorRotationDir(Motor.Z,True)
         else:
@@ -333,7 +330,7 @@ class SmartFarmControl():
     def switchZ2Pressed(self,channel):
         if self.modes[2]=="initialization":
             print("z2")
-            self.zlen=self.counter
+            # self.zlen=self.counter
             self.setMotorRotationDir(Motor.Z,False)
         else:
             self.zpos=self.zlen

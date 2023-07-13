@@ -5,8 +5,8 @@ from enum import Enum
 
 
 control=SmartFarmControl.SmartFarmControl()
-control.test()
-# control.initializing_origin()
+# control.test()
+control.initializing_origin()
 
 # control.initializing_end_to_end(1)
 
