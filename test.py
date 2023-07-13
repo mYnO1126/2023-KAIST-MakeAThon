@@ -5,13 +5,14 @@ from enum import Enum
 
 
 control=SmartFarmControl.SmartFarmControl()
-# control.test()
+#control.test()
+# control.moveMotorsDistance([1000,1000,1000])
 control.initializing_origin()
 
 # control.initializing_end_to_end(1)
 
 # control.initializing_end_to_end(2)
-
+GPIO.cleanup()
 
 # OUT=GPIO.OUT
 # IN=GPIO.IN
@@ -68,13 +69,13 @@ control.initializing_origin()
 #         # print(left)
 #         # print(right)
 
-try:
-    # test=Test()
-    # test.setMode()
-    while 1:
-        # print(".")
-        # pin_read = GPIO.input(END_SWITCH_X2)
-        # print(pin_read)
-        time.sleep(0.1)
-finally:
-    GPIO.cleanup()
+# try:
+#     # test=Test()
+#     # test.setMode()
+#     while 1:
+#         # print(".")
+#         # pin_read = GPIO.input(END_SWITCH_X2)
+#         # print(pin_read)
+#         time.sleep(0.1)
+# finally:
+#     GPIO.cleanup()
