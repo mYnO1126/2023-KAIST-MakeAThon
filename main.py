@@ -4,9 +4,9 @@ import signal
 import sys
 import pygame
 import serial
-# import SmartFarmControl
 import numpy as np
 import random
+import SmartFarmControl
 
 TEMP_LIMIT=3.0
 HUMID_LIMIT=20.0
@@ -486,7 +486,7 @@ class Process:
         self.font=pygame.font.Font('freesansbold.ttf',20)
         self.noticeFont=pygame.font.Font('freesansbold.ttf',30)
 
-        # self.arduino = serial.Serial('/dev/ttyACM0', 115200)
+        self.arduino = serial.Serial('/dev/ttyACM0', 115200)
 
         self.color=Color()
         resolution = (1024,600)
@@ -504,8 +504,8 @@ class Process:
         clickSettings=pygame.transform.scale(pygame.image.load("images/settings.png"),(40,40))
         self.settingsButton=Button(settingsIcon,(40,560),clickSettings,self.settingsScreen)
 
-        # self.farmControl=SmartFarmControl.SmartFarmControl()
-        # self.farmControl.initializing_origin()
+        self.farmControl=SmartFarmControl.SmartFarmControl()
+        self.farmControl.initializing_origin()
 
         self.info=[25.0,50.0,0,0,0,False]
         self.potGridInfo=potGridInfo(POT_GRID)
@@ -513,12 +513,12 @@ class Process:
         self.sensorButtonCounter=0
 
     def updateSensorsInfos(self):
-        # self.arduino.flushInput()
-        # line = self.arduino.readline()
-        # line = line.decode('euc-kr') # cp949 euc-kr utf-8
-        # line = line.split()
-        # for i in range(5):
-        #     self.info[i]=line[i]
+        self.arduino.flushInput()
+        line = self.arduino.readline()
+        line = line.decode('euc-kr') # cp949 euc-kr utf-8
+        line = line.split()
+        for i in range(5):
+            self.info[i]=line[i]
         return
     def stopSensorUpdate(self):
         self.sensorButtonCounter+=1
@@ -636,6 +636,8 @@ class Process:
         while True:
             count+=1
             if count%100==0:
+                if self.farmControl.checkOrigin() is False:
+                    self.farmControl.moveMotorsToOrigin()
                 if self.updateSensorsRealTime:
                     self.updateSensorsInfos()
             self.screen.fill(self.color.white)
@@ -654,7 +656,7 @@ class Process:
                     notification.printScreen(self.screen,self.noticeFont)          
                     if move:
                         time.sleep(0.001)
-                        # self.farmControl.moveMotorsOrigDest(orig,dest)
+                        self.farmControl.moveMotorsOrigDest(orig,dest)
                         self.potGridInfo.updatePotGridInfo(orig,dest)
                         notification.updateInfo(None) 
                         
@@ -717,7 +719,7 @@ def printObjects(objects,display):
 
 
 def signal_handler(sig, frame):
-    #GPIO.cleanup()
+    GPIO.cleanup()
     sys.exit(0)
 def end():
     #GPIO.cleanup()

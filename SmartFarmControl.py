@@ -27,12 +27,12 @@ X_UNIT=9600
 Z_UNIT=10200
 
 X_OFFSET=4200
-Y_OFFSET=6500
+Y_OFFSET=6000
 Z_OFFSET=3000
 
-Y_IN_DIST=6400
+Y_IN_DIST=6500
 Y_OUT_DIST=-7000
-Z_UP_DIST=3500
+Z_UP_DIST=3000
 
 OUT=GPIO.OUT
 IN=GPIO.IN
@@ -126,9 +126,15 @@ class SmartFarmControl():
             if mode=="initialization":
                 return False
         return True
+    
     def checkMotorMode(self,motor):
         num=self.getMotorNum(motor)
         if self.modes[num]=="initialization":
+            return False
+        else:
+            return True
+    def checkOrigin(self):
+        if self.xpos!=ORIGIN or self.ypos!=ORIGIN or self.zpos!=ORIGIN:
             return False
         else:
             return True
