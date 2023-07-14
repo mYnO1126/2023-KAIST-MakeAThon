@@ -6,7 +6,7 @@ import pygame
 import serial
 import numpy as np
 import random
-import SmartFarmControl
+# import SmartFarmControl
 
 TEMP_LIMIT=3.0
 HUMID_LIMIT=20.0
@@ -31,6 +31,7 @@ class Info():
         self.critical=infos[0]
         self.temp=infos[1]
         self.status=infos[2]
+        self.num=infos[3]
     def printInfo(self):
         return str(self.critical)+" "+str(self.temp)
     def getTemp(self):
@@ -43,6 +44,8 @@ class Info():
         if self.status=="Done":
             return True
         else:return False
+    def getNum(self):
+        return self.num
 
 
 class Notice():
@@ -74,17 +77,17 @@ class potInfo():
     def dupInfo(self):
         if self.infos is None:
             return None
-        return Info([self.infos.getCritical(),self.infos.getTemp(),self.infos.getStatus()])
+        return Info([self.infos.getCritical(),self.infos.getTemp(),self.infos.getStatus(),self.infos.getNum()])
 
 class potGridInfo():
     def __init__(self,grid=POT_GRID):
         self.grid=grid
         nums=[2,5,7,10,11]
         self.PotInfos=[potInfo(False,None) for i in range(grid[0]*grid[1])]
-        for i in nums:
-            self.PotInfos[i].updatePotInfo(True,Info((False,20+random.randint(0,10),"Good")))
-        self.PotInfos[2].updatePotInfo(True,Info((False,25,"Done")))
-        self.PotInfos[7].updatePotInfo(True,Info((True,25,"Bad")))
+        for i in range(len(nums)):
+            self.PotInfos[nums[i]].updatePotInfo(True,Info((False,20+random.randint(0,10),"Good",i)))
+        self.PotInfos[2].updatePotInfo(True,Info((False,25,"Done",0)))
+        self.PotInfos[7].updatePotInfo(True,Info((True,25,"Bad",2)))
 
 
 
@@ -279,7 +282,7 @@ class Notification:
         if info is None:
             self.info=None
         else:
-            self.info=Info([info.critical,info.temp,info.status])
+            self.info=Info([info.getCritical(),info.getTemp(),info.getStatus(),info.getNum()])
     def updateClick(self,display,mouse):
         if self.pos[0] + self.size[0]/2.0 > mouse[0] > self.pos[0]-self.size[0]/2.0 and self.pos[1] + self.size[1]/2.0 > mouse[1] > self.pos[1]-self.size[1]/2.0:
             if self.action is not None:
@@ -290,13 +293,14 @@ class Notification:
 
 
 class potGrid:
-    def __init__(self,pos,size,thickness,radius,potGridInfo, action = None):
+    def __init__(self,pos,size,thickness,radius,potGridInfo,font, action = None):
         self.pos=pos
         self.action=action
         self.size=size
         self.thickness=thickness
         self.radius=radius
         self.potGridInfo=potGridInfo
+        self.font=font
 
         self.potSize=65
         self.gap=20
@@ -394,6 +398,10 @@ class potGrid:
                             col=color.gray
                         if i==self.selectedPot[0] and j==self.selectedPot[1]:
                             col=color.yellow
+                            text=self.font.render(str(info.getNum()),True,color.black)
+                            text_rect=text.get_rect()
+                            text_rect.center=(self.offset[0]+j*(self.potSize+self.gap)+self.potSize/2,self.offset[1]+i*(self.potSize+self.gap)+self.potSize/2)
+                            potGridIcon.blit(text,(self.offset[0]+j*(self.potSize+self.gap)+self.potSize/2,self.offset[1]+i*(self.potSize+self.gap)+self.potSize/2))
                         pygame.draw.rect(
                             potGridIcon,
                             col,
@@ -416,13 +424,17 @@ class potGrid:
                 x,y=POT_GRID
                 for i in range(x):
                     for j in range(y):
-                        potBool,_=self.potGridInfo.returnPotGridInfo((i,j))
+                        potBool,info=self.potGridInfo.returnPotGridInfo((i,j))
                         if potBool:
                             col=color.gray
                         else:
                             col=color.green
                         if i==self.selectedPot[0] and j==self.selectedPot[1]:
                             col=color.yellow
+                            text=self.font.render(str(info.getNum()),True,color.black)
+                            text_rect=text.get_rect()
+                            text_rect.center=(self.offset[0]+j*(self.potSize+self.gap)+self.potSize/2,self.offset[1]+i*(self.potSize+self.gap)+self.potSize/2)
+                            potGridIcon.blit(text,text_rect)
                         pygame.draw.rect(
                             potGridIcon,
                             col,
@@ -447,6 +459,10 @@ class potGrid:
                 for j in range(y):
                     potBool,info=self.potGridInfo.returnPotGridInfo((i,j))
                     if potBool:
+                        text=self.font.render(str(info.getNum()),True,color.black)
+                        text_rect=text.get_rect()
+                        text_rect.center=(self.offset[0]+j*(self.potSize+self.gap)+self.potSize/2,self.offset[1]+i*(self.potSize+self.gap)+self.potSize/2)
+                        potGridIcon.blit(text,text_rect)
                         if info.getCritical():
                             col=color.magenta
                         elif info.getDone():
@@ -486,7 +502,7 @@ class Process:
         self.font=pygame.font.Font('freesansbold.ttf',20)
         self.noticeFont=pygame.font.Font('freesansbold.ttf',30)
 
-        self.arduino = serial.Serial('/dev/ttyACM0', 115200)
+        # self.arduino = serial.Serial('/dev/ttyACM0', 115200)
 
         self.color=Color()
         resolution = (1024,600)
@@ -504,8 +520,8 @@ class Process:
         clickSettings=pygame.transform.scale(pygame.image.load("images/settings.png"),(40,40))
         self.settingsButton=Button(settingsIcon,(40,560),clickSettings,self.settingsScreen)
 
-        self.farmControl=SmartFarmControl.SmartFarmControl()
-        self.farmControl.initializing_origin()
+        # self.farmControl=SmartFarmControl.SmartFarmControl()
+        # self.farmControl.initializing_origin()
 
         self.info=[25.0,50.0,0,0,0,False]
         self.potGridInfo=potGridInfo(POT_GRID)
@@ -513,12 +529,12 @@ class Process:
         self.sensorButtonCounter=0
 
     def updateSensorsInfos(self):
-        self.arduino.flushInput()
-        line = self.arduino.readline()
-        line = line.decode('euc-kr') # cp949 euc-kr utf-8
-        line = line.split()
-        for i in range(5):
-            self.info[i]=line[i]
+        # self.arduino.flushInput()
+        # line = self.arduino.readline()
+        # line = line.decode('euc-kr') # cp949 euc-kr utf-8
+        # line = line.split()
+        # for i in range(5):
+        #     self.info[i]=line[i]
         return
     def stopSensorUpdate(self):
         self.sensorButtonCounter+=1
@@ -593,7 +609,7 @@ class Process:
 
         backButton = Button(backIcon,(920,40),clickBack,self.mainScreen)
         notification=Notification(potinfo.getPotInfo(),(280,260),NOTIFICATION_SIZE,15,20,"notice",None)
-        potgrid=potGrid((1024-280,260),NOTIFICATION_SIZE,15,20,self.potGridInfo,"disabled")
+        potgrid=potGrid((1024-280,260),NOTIFICATION_SIZE,15,20,self.potGridInfo,self.font,"disabled")
         
         buttons=[self.stopButton,self.settingsButton,backButton]
         objects=[potgrid]
@@ -627,7 +643,7 @@ class Process:
 
         backButton = Button(backIcon,(920,40),clickBack,self.mainScreen)
         notification=Notification(None,(1024-280,260),NOTIFICATION_SIZE,15,20,"potSelect",None)
-        potgrid=potGrid((280,260),NOTIFICATION_SIZE,15,20,self.potGridInfo,"selection")
+        potgrid=potGrid((280,260),NOTIFICATION_SIZE,15,20,self.potGridInfo,self.font,"selection")
         
         buttons=[self.stopButton,self.settingsButton,backButton]
         objects=[potgrid]
@@ -636,8 +652,8 @@ class Process:
         while True:
             count+=1
             if count%100==0:
-                if self.farmControl.checkOrigin() is False:
-                    self.farmControl.moveMotorsToOrigin()
+                # if self.farmControl.checkOrigin() is False:
+                #     self.farmControl.moveMotorsToOrigin()
                 if self.updateSensorsRealTime:
                     self.updateSensorsInfos()
             self.screen.fill(self.color.white)
@@ -656,7 +672,7 @@ class Process:
                     notification.printScreen(self.screen,self.noticeFont)          
                     if move:
                         time.sleep(0.001)
-                        self.farmControl.moveMotorsOrigDest(orig,dest)
+                        # self.farmControl.moveMotorsOrigDest(orig,dest)
                         self.potGridInfo.updatePotGridInfo(orig,dest)
                         notification.updateInfo(None) 
                         
